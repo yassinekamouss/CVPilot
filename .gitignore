@@ -39,3 +39,8 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+
+AI_Resume_Builder_Project_Prompt.md
+/app/generated/prisma
+dycrypt.mjs
