@@ -1,5 +1,6 @@
 import { auth, signIn, signOut } from "@/lib/auth/auth";
 import Link from "next/link";
+import { APP_ROUTES, DEFAULT_AUTH_PROVIDER } from "@/constants";
 
 /**
  * Simple Authentication Test Landing Page.
@@ -21,7 +22,7 @@ export default async function LandingPage() {
             </div>
             
             <Link 
-              href="/dashboard"
+              href={APP_ROUTES.dashboard}
               className="block w-full text-center py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors"
             >
               Go to Dashboard
@@ -44,7 +45,7 @@ export default async function LandingPage() {
             
             <form action={async () => {
               "use server";
-              await signIn("google");
+              await signIn(DEFAULT_AUTH_PROVIDER);
             }}>
               <button className="w-full flex items-center justify-center gap-2 py-3 bg-white hover:bg-zinc-100 border border-zinc-300 rounded-lg transition-colors text-black">
                 <svg className="w-5 h-5" viewBox="0 0 24 24">
