@@ -1,0 +1,58 @@
+{
+  "Landing": {
+    "title": "CVPilot | Créez votre CV avec l'IA",
+    "heroTitle": "Construisez votre CV professionnel avec l'IA",
+    "heroSubtitle": "Créez un CV percutant, optimisé pour les recruteurs et propulsé par l'intelligence artificielle.",
+    "getStarted": "Commencer",
+    "signIn": "Se connecter",
+    "dashboard": "Tableau de bord",
+    "placeholderHero": "Espace réservé pour la maquette visuelle (Hero Section, animations, illustrations)",
+    "featuresTitle": "Fonctionnalités Clés",
+    "placeholderFeatures": "Espace réservé pour la grille des fonctionnalités (Générateur IA, Optimisation ATS, Analyse de mots-clés)",
+    "footer": "© 2026 CVPilot. Tous droits réservés."
+  },
+  "Login": {
+    "title": "Bienvenue sur CVPilot",
+    "subtitle": "Connectez-vous pour créer votre CV propulsé par l'IA",
+    "google": "Continuer avec Google",
+    "linkedin": "Continuer avec LinkedIn",
+    "footerNote": "En vous connectant, vous acceptez nos Conditions d'utilisation et notre Politique de confidentialité.",
+    "errors": {
+      "conflict": "Vous vous êtes déjà connecté avec {provider}. Veuillez vous connecter avec {provider} pour accéder à votre compte, puis connecter d'autres fournisseurs depuis les paramètres.",
+      "default": "Une erreur inattendue est survenue. Veuillez réessayer.",
+      "AccountAlreadyLinked": "Ce compte est déjà lié à un autre utilisateur.",
+      "Configuration": "Une erreur de configuration est survenue. Veuillez contacter le support si le problème persiste.",
+      "AccessDenied": "L'accès a été refusé. Veuillez réessayer.",
+      "Verification": "Le lien de connexion a expiré ou a déjà été utilisé.",
+      "OAuthCallback": "Un problème est survenu lors de la connexion. Veuillez réessayer."
+    }
+  },
+  "Dashboard": {
+    "title": "Tableau de bord",
+    "signOut": "Se déconnecter",
+    "accountDetails": "Détails du compte",
+    "email": "Adresse e-mail",
+    "dbId": "Identifiant base de données",
+    "profile": "Profil (Init. paresseuse)",
+    "name": "Nom",
+    "status": "Statut",
+    "sync": "Profil synchronisé avec la base de données",
+    "nextSteps": "Prochaines étapes",
+    "nextStepsDesc": "Votre couche d'authentification est entièrement fonctionnelle. L'identifiant utilisateur est disponible dans la session et votre profil a été créé de manière paresseuse en base de données.",
+    "returnHome": "Retourner à l'accueil"
+  },
+  "Settings": {
+    "title": "Paramètres du compte",
+    "subtitle": "Gérez les méthodes de connexion associées à votre compte CVPilot.",
+    "signinMethods": "Méthodes de connexion",
+    "connected": "Connecté",
+    "notConnected": "Non connecté",
+    "connect": "Connecter {provider}",
+    "infoNote": "Les comptes connectés vous permettent de vous connecter en utilisant l'une des méthodes associées. Vos informations de profil ne seront pas modifiées en ajoutant une nouvelle méthode.",
+    "messages": {
+      "AccountAlreadyLinked": "Ce compte est déjà lié à un autre utilisateur.",
+      "alreadyConnected": "Ce fournisseur est déjà connecté à votre compte.",
+      "linked": "Compte connecté avec succès."
+    }
+  }
+}

@@ -1,0 +1,58 @@
+{
+  "Landing": {
+    "title": "CVPilot | Build your Resume with AI",
+    "heroTitle": "Build your professional resume with AI",
+    "heroSubtitle": "Create an impactful resume, optimized for recruiters and powered by artificial intelligence.",
+    "getStarted": "Get Started",
+    "signIn": "Sign In",
+    "dashboard": "Dashboard",
+    "placeholderHero": "Placeholder for visual mockup (Hero Section, animations, illustrations)",
+    "featuresTitle": "Key Features",
+    "placeholderFeatures": "Placeholder for features grid (AI Writer, ATS Optimization, Keyword Analysis)",
+    "footer": "© 2026 CVPilot. All rights reserved."
+  },
+  "Login": {
+    "title": "Welcome to CVPilot",
+    "subtitle": "Sign in to build your AI-powered resume",
+    "google": "Continue with Google",
+    "linkedin": "Continue with LinkedIn",
+    "footerNote": "By signing in you agree to our Terms of Service and Privacy Policy.",
+    "errors": {
+      "conflict": "You previously signed in with {provider}. Please sign in with {provider} to access your account, then connect additional providers from your account settings.",
+      "default": "An unexpected error occurred. Please try again.",
+      "AccountAlreadyLinked": "This account is already linked to a different user.",
+      "Configuration": "A configuration error occurred. Please contact support if this persists.",
+      "AccessDenied": "Access was denied. Please try again or contact support.",
+      "Verification": "The sign-in link has expired or already been used.",
+      "OAuthCallback": "Something went wrong during sign-in. Please try again."
+    }
+  },
+  "Dashboard": {
+    "title": "Dashboard",
+    "signOut": "Sign Out",
+    "accountDetails": "Account Details",
+    "email": "Email Address",
+    "dbId": "Database ID",
+    "profile": "Profile (Lazy Init)",
+    "name": "Name",
+    "status": "Status",
+    "sync": "Profile synchronized with database",
+    "nextSteps": "Next Steps",
+    "nextStepsDesc": "Your authentication layer is fully functional. The user ID is available in the session, and your profile has been lazily created in the database.",
+    "returnHome": "Return to home"
+  },
+  "Settings": {
+    "title": "Account Settings",
+    "subtitle": "Manage the sign-in methods connected to your CVPilot account.",
+    "signinMethods": "Sign-in Methods",
+    "connected": "Connected",
+    "notConnected": "Not connected",
+    "connect": "Connect {provider}",
+    "infoNote": "Connected accounts allow you to sign in using any of the linked methods. Your profile information will not be changed when adding a new sign-in method.",
+    "messages": {
+      "AccountAlreadyLinked": "This account is already linked to a different user.",
+      "alreadyConnected": "This provider is already connected to your account.",
+      "linked": "Account successfully connected."
+    }
+  }
+}

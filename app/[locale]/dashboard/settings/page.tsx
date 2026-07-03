@@ -1,11 +1,14 @@
 import type { ReactNode } from "react";
+import { getTranslations, setRequestLocale } from "next-intl/server";
+import { Link } from "@/i18n/routing";
+import { notFound, redirect } from "next/navigation";
 
 import { APP_ROUTES, AUTH_PROVIDER_BUTTON_CLASSES, AUTH_PROVIDER_LABELS, AUTH_PROVIDERS } from "@/constants";
 import { auth, signIn } from "@/lib/auth/auth";
 import prisma from "@/lib/db";
-import { redirect } from "next/navigation";
 import { AuthError } from "next-auth";
-import type { AuthProvider, SettingsPageProps } from "@/types";
+import type { AuthProvider, SettingsSearchParams } from "@/types";
+import LanguageSwitcher from "@/components/shared/language-switcher";
 
 // ─── Provider display metadata ────────────────────────────────────────────────
 const PROVIDER_META = {
@@ -34,34 +37,41 @@ const PROVIDER_META = {
 
 const SUPPORTED_PROVIDERS = AUTH_PROVIDERS;
 
-// ─── Status/Error message resolver ────────────────────────────────────────────
-function resolveStatusMessage(
-  error?: string,
-  status?: string
-): { text: string; type: "error" | "success" } | null {
-  if (error === "AccountAlreadyLinked") {
-    return {
-      text: "This account is already linked to a different user.",
-      type: "error",
-    };
-  }
-  if (status === "already-connected") {
-    return { text: "This provider is already connected to your account.", type: "success" };
-  }
-  if (status === "linked") {
-    return { text: "Account successfully connected.", type: "success" };
-  }
-  return null;
+interface SettingsPageProps {
+  params: Promise<{ locale: string }>;
+  searchParams: Promise<SettingsSearchParams>;
 }
 
-export default async function SettingsPage({ searchParams }: SettingsPageProps) {
-  // Require authentication — middleware should prevent reaching this without a
-  // session, but we guard again explicitly for defence in depth.
-  const session = await auth();
-  if (!session?.user?.id) redirect(APP_ROUTES.login);
+export default async function SettingsPage({ params, searchParams }: SettingsPageProps) {
+  const { locale } = await params;
+  setRequestLocale(locale);
 
-  const { error, status } = await searchParams;
-  const statusMessage = resolveStatusMessage(error, status);
+  const t = await getTranslations("Settings");
+
+  const session = await auth();
+  if (!session?.user?.id) redirect(`/${locale}${APP_ROUTES.login}`);
+
+  const resolvedSearchParams = await searchParams;
+  const { error, status } = resolvedSearchParams;
+
+  // Resolve status/error message using next-intl
+  let statusMessage: { text: string; type: "error" | "success" } | null = null;
+  if (error === "AccountAlreadyLinked") {
+    statusMessage = {
+      text: t("messages.AccountAlreadyLinked"),
+      type: "error",
+    };
+  } else if (status === "already-connected") {
+    statusMessage = {
+      text: t("messages.alreadyConnected"),
+      type: "success",
+    };
+  } else if (status === "linked") {
+    statusMessage = {
+      text: t("messages.linked"),
+      type: "success",
+    };
+  }
 
   // Fetch the list of providers already linked to this user
   const linkedAccounts = await prisma.account.findMany({
@@ -71,14 +81,25 @@ export default async function SettingsPage({ searchParams }: SettingsPageProps) 
   const linkedProviders = new Set(linkedAccounts.map((a) => a.provider));
 
   return (
-    <div className="max-w-2xl mx-auto px-4 py-10 space-y-8">
+    <div className="max-w-2xl mx-auto px-4 py-10 space-y-8 dark:text-white relative">
+      {/* Language switcher & Back navigation */}
+      <div className="flex items-center justify-between">
+        <Link
+          href={APP_ROUTES.dashboard}
+          className="text-sm font-semibold text-zinc-500 hover:text-zinc-900 dark:hover:text-white"
+        >
+          ← Back to Dashboard
+        </Link>
+        <LanguageSwitcher />
+      </div>
+
       {/* Header */}
       <div>
         <h1 className="text-2xl font-bold text-zinc-900 dark:text-white">
-          Account Settings
+          {t("title")}
         </h1>
         <p className="mt-1 text-sm text-zinc-500 dark:text-zinc-400">
-          Manage the sign-in methods connected to your CVPilot account.
+          {t("subtitle")}
         </p>
       </div>
 
@@ -113,7 +134,7 @@ export default async function SettingsPage({ searchParams }: SettingsPageProps) 
       <div className="bg-white dark:bg-zinc-900 rounded-2xl border border-zinc-200 dark:border-zinc-800 divide-y divide-zinc-100 dark:divide-zinc-800 shadow-sm">
         <div className="px-6 py-4">
           <h2 className="text-sm font-semibold text-zinc-700 dark:text-zinc-300 uppercase tracking-wide">
-            Sign-in Methods
+            {t("signinMethods")}
           </h2>
         </div>
 
@@ -134,7 +155,7 @@ export default async function SettingsPage({ searchParams }: SettingsPageProps) 
                     {meta.label}
                   </p>
                   <p className="text-xs text-zinc-500 dark:text-zinc-400">
-                    {isConnected ? "Connected" : "Not connected"}
+                    {isConnected ? t("connected") : t("notConnected")}
                   </p>
                 </div>
               </div>
@@ -145,26 +166,17 @@ export default async function SettingsPage({ searchParams }: SettingsPageProps) 
                   <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" strokeWidth="2" stroke="currentColor">
                     <path strokeLinecap="round" strokeLinejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                   </svg>
-                  Connected
+                  {t("connected")}
                 </span>
               ) : (
-                /**
-                 * SECURITY: This form triggers the OAuth flow with an active session.
-                 * The signIn callback in callbacks.ts detects session?.user?.id and
-                 * routes into PATH A (account linking), NOT the public sign-in flow.
-                 *
-                 * This is the ONLY place in the app allowed to link a new provider
-                 * to an existing User row.
-                 */
                 <form
                   action={async () => {
                     "use server";
                     try {
                       await signIn(providerKey, {
-                        redirectTo: `${APP_ROUTES.dashboardSettings}?status=linked`,
+                        redirectTo: `/${locale}${APP_ROUTES.dashboardSettings}?status=linked`,
                       });
                     } catch (err) {
-                      // Re-throw AuthError subclasses so Next.js can handle the redirect
                       if (err instanceof AuthError) throw err;
                       throw err;
                     }
@@ -175,7 +187,7 @@ export default async function SettingsPage({ searchParams }: SettingsPageProps) 
                     type="submit"
                     className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-all active:scale-[0.97] cursor-pointer shadow-sm ${meta.connectBtnClass}`}
                   >
-                    Connect {meta.label}
+                    {t("connect", { provider: meta.label })}
                   </button>
                 </form>
               )}
@@ -186,8 +198,7 @@ export default async function SettingsPage({ searchParams }: SettingsPageProps) 
 
       {/* Info note */}
       <p className="text-xs text-zinc-400 dark:text-zinc-600 text-center leading-relaxed">
-        Connected accounts allow you to sign in using any of the linked methods.
-        Your profile information (name, email, avatar) will not be changed when adding a new sign-in method.
+        {t("infoNote")}
       </p>
     </div>
   );
