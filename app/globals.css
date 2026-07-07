@@ -17,6 +17,13 @@
 }
 
 @layer base {
+  :root {
+    /* Force the browser to always render in light mode.
+       This prevents OS dark-mode from changing system colors,
+       form inputs, scrollbars, and browser-injected styles. */
+    color-scheme: light;
+  }
+
   body {
     font-family: var(--font-sans);
     background-color: var(--color-brand-bg);
@@ -25,6 +32,18 @@
   
   h1, h2, h3, h4, h5, h6 {
     font-family: var(--font-heading);
+  }
+}
+
+/* Hard-lock: even if the OS is in dark mode, we always render
+   our own brand palette — never the browser's dark defaults. */
+@media (prefers-color-scheme: dark) {
+  :root {
+    color-scheme: light;
+  }
+  body {
+    background-color: var(--color-brand-bg);
+    color: var(--color-text-primary);
   }
 }
 
