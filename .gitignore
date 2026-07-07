@@ -44,3 +44,8 @@ next-env.d.ts
 AI_Resume_Builder_Project_Prompt.md
 /app/generated/prisma
 dycrypt.mjs
+
+
+# AI driven coding files
+.agents/
+skills-lock.json
