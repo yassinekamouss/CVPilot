@@ -5,7 +5,7 @@ import { useLocale } from "next-intl";
 
 /**
  * Client Component to switch application language.
- * Uses the localized router wrappers from next-intl configuration.
+ * Styled to match the existing brand design system.
  */
 export default function LanguageSwitcher() {
   const pathname = usePathname();
@@ -17,26 +17,28 @@ export default function LanguageSwitcher() {
   };
 
   return (
-    <div className="flex items-center gap-1.5 p-1 bg-zinc-100 dark:bg-zinc-900 rounded-lg border border-zinc-200 dark:border-zinc-800">
+    <div className="flex items-center gap-0.5 p-0.5 bg-brand-bg border border-border-light rounded-full">
       <button
         onClick={() => handleLanguageChange("fr")}
-        className={`px-3 py-1.5 text-xs font-semibold rounded-md transition-all cursor-pointer ${
+        className={`px-3 py-1 text-[10px] font-bold rounded-full transition-all duration-200 cursor-pointer ${
           currentLocale === "fr"
-            ? "bg-white dark:bg-zinc-800 text-zinc-900 dark:text-white shadow-sm"
-            : "text-zinc-500 hover:text-zinc-900 dark:hover:text-white"
+            ? "bg-brand-navy text-white shadow-sm"
+            : "text-text-secondary hover:text-brand-navy"
         }`}
         aria-label="Changer la langue en français"
+        aria-pressed={currentLocale === "fr"}
       >
         FR
       </button>
       <button
         onClick={() => handleLanguageChange("en")}
-        className={`px-3 py-1.5 text-xs font-semibold rounded-md transition-all cursor-pointer ${
+        className={`px-3 py-1 text-[10px] font-bold rounded-full transition-all duration-200 cursor-pointer ${
           currentLocale === "en"
-            ? "bg-white dark:bg-zinc-800 text-zinc-900 dark:text-white shadow-sm"
-            : "text-zinc-500 hover:text-zinc-900 dark:hover:text-white"
+            ? "bg-brand-navy text-white shadow-sm"
+            : "text-text-secondary hover:text-brand-navy"
         }`}
         aria-label="Switch language to English"
+        aria-pressed={currentLocale === "en"}
       >
         EN
       </button>

@@ -5,29 +5,32 @@ import { useGSAP } from "@gsap/react";
 import { gsap } from "gsap";
 import { Activity, Check, FileText, BarChart, ChevronRight, ArrowRight } from "lucide-react";
 import LaptopMockup from "./laptop-mockup";
-
-const phases = [
-  {
-    id: "scan",
-    title: "Analyse Structurelle",
-    subtitle: "Phase 01 — Extraction",
-    desc: "Notre moteur déconstruit votre CV pour identifier les lacunes de formatage et évaluer sa lisibilité par les algorithmes de recrutement.",
-  },
-  {
-    id: "alignment",
-    title: "Calibrage ATS",
-    subtitle: "Phase 02 — Mapping",
-    desc: "Comparaison sémantique instantanée entre vos expériences et les exigences techniques du poste cible pour garantir l'alignement des mots-clés.",
-  },
-  {
-    id: "rewrite",
-    title: "Ingénierie STAR",
-    subtitle: "Phase 03 — Optimisation",
-    desc: "Restructuration de vos accomplissements en affirmations quantifiées et orientées impact, maximisant votre taux de conversion en entretien.",
-  },
-];
+import { useTranslations } from "next-intl";
 
 export default function WorkflowContent() {
+  const t = useTranslations("Workflow");
+
+  const phases = [
+    {
+      id: "scan",
+      title: t("phase1Title"),
+      subtitle: t("phase1Subtitle"),
+      desc: t("phase1Desc"),
+    },
+    {
+      id: "alignment",
+      title: t("phase2Title"),
+      subtitle: t("phase2Subtitle"),
+      desc: t("phase2Desc"),
+    },
+    {
+      id: "rewrite",
+      title: t("phase3Title"),
+      subtitle: t("phase3Subtitle"),
+      desc: t("phase3Desc"),
+    },
+  ];
+
   const [activePhase, setActivePhase] = React.useState(0);
   const sectionRef = useRef<HTMLElement>(null);
   const scannerLineRef = useRef<HTMLDivElement>(null);
@@ -73,13 +76,13 @@ export default function WorkflowContent() {
       <div className="mx-auto max-w-7xl px-6 sm:px-8">
         <div className="text-center max-w-3xl mx-auto mb-20 space-y-6">
           <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-slate-100 text-[#64748B] text-xs font-semibold tracking-wide uppercase border border-[#E2E8F0]">
-            <Activity className="w-3.5 h-3.5" /> Technologie Propriétaire
+            <Activity className="w-3.5 h-3.5" /> {t("badge")}
           </div>
           <h2 className="font-heading text-3xl sm:text-4xl font-semibold tracking-tight text-brand-navy leading-tight">
-            La science du recrutement, automatisée.
+            {t("title")}
           </h2>
           <p className="text-sm sm:text-base text-text-secondary font-normal max-w-xl mx-auto leading-relaxed">
-            Découvrez comment notre moteur d'intelligence artificielle analyse, calibre et réécrit votre profil pour le transformer en une candidature prioritaire.
+            {t("description")}
           </p>
         </div>
 
@@ -128,7 +131,7 @@ export default function WorkflowContent() {
             <LaptopMockup>
               <div className="w-full md:w-[35%] bg-[#0B132B] border-r border-slate-800 flex flex-col z-20 h-full overflow-hidden">
                 <div className="p-3 border-b border-slate-800 shrink-0">
-                  <h3 className="text-[9px] font-mono text-slate-400 uppercase tracking-wider mb-1">Cible d&apos;analyse</h3>
+                  <h3 className="text-[9px] font-mono text-slate-400 uppercase tracking-wider mb-1">{t("analysisTarget")}</h3>
                   <p className="text-xs text-white font-medium flex items-center gap-1.5 truncate">
                     Senior Frontend Eng. <ChevronRight className="w-3 h-3 text-slate-600" /> Stripe
                   </p>
@@ -153,10 +156,10 @@ export default function WorkflowContent() {
                       </span>
                     </div>
                   </div>
-                  <span className="text-[9px] font-mono uppercase tracking-widest text-slate-500 mt-2">Score ATS Global</span>
+                  <span className="text-[9px] font-mono uppercase tracking-widest text-slate-500 mt-2">{t("atsScore")}</span>
                 </div>
                 <div className="p-3 flex-1 flex flex-col justify-center overflow-hidden">
-                  <h5 className="text-[9px] font-mono uppercase tracking-wider text-slate-500 mb-2.5">Mots-clés requis</h5>
+                  <h5 className="text-[9px] font-mono uppercase tracking-wider text-slate-500 mb-2.5">{t("requiredKeywords")}</h5>
                   <div className="space-y-1.5 text-[10px] sm:text-xs font-medium font-mono">
                     {[
                       { label: "React", matched: activePhase >= 1 },
@@ -177,7 +180,7 @@ export default function WorkflowContent() {
                         {matched ? (
                           <Check className="w-3.5 h-3.5" />
                         ) : partial ? (
-                          <span className="text-[8px] uppercase tracking-wider">Manquant</span>
+                          <span className="text-[8px] uppercase tracking-wider">{t("missing")}</span>
                         ) : (
                           <div className="w-1.5 h-1.5 rounded-full bg-slate-700" />
                         )}
@@ -206,25 +209,25 @@ export default function WorkflowContent() {
                         <p className="text-[9px] text-slate-500 mt-0.5 font-mono uppercase tracking-wider">Senior Frontend Engineer</p>
                       </div>
                       <div className="space-y-3">
-                        <h5 className="text-[9px] font-bold text-slate-800 tracking-widest border-b border-slate-100 pb-1 uppercase">Expérience</h5>
+                        <h5 className="text-[9px] font-bold text-slate-800 tracking-widest border-b border-slate-100 pb-1 uppercase">{t("experience")}</h5>
                         <div>
                           <div className="flex justify-between text-[10px] font-bold text-slate-900 mb-2">
                             <span>Frontend Engineer @ TechCorp</span>
-                            <span className="text-slate-500 font-mono text-[8px]">2021 - Présent</span>
+                            <span className="text-slate-500 font-mono text-[8px]">{t("currentDate")}</span>
                           </div>
                           <div className="text-[10px] sm:text-[11px] leading-relaxed text-slate-600 relative min-h-[50px]">
                             {activePhase === 0 && (
-                              <p className="transition-opacity duration-300">• Aidé les clients à développer des applications web et à résoudre les bogues techniques dans les délais.</p>
+                              <p className="transition-opacity duration-300">{t("passiveDesc")}</p>
                             )}
                             {activePhase === 1 && (
                               <p className="transition-opacity duration-300">
-                                • Aidé les clients à développer des applications <span className="bg-amber-100 text-amber-900 px-1 py-[1px] rounded-sm font-medium">React</span> et à résoudre les bogues dans les délais.
+                                • {t("alignedDesc1")}
                               </p>
                             )}
                             {activePhase === 2 && (
                               <div ref={typedTextRef}>
                                 <p className="text-slate-900 font-medium bg-[#10B981]/10 border border-[#10B981]/20 p-2.5 rounded-md shadow-sm">
-                                  • Déployé <span className="text-[#10B981] font-bold">12 apps</span> en <span className="bg-[#10B981]/20 text-[#065f46] px-1 py-[1px] rounded-sm">React</span> et <span className="bg-[#10B981]/20 text-[#065f46] px-1 py-[1px] rounded-sm">TypeScript</span>, optimisant les perfs de <span className="text-[#10B981] font-bold">40%</span>.
+                                  {t("optimizedDesc")}
                                 </p>
                               </div>
                             )}
@@ -251,10 +254,10 @@ export default function WorkflowContent() {
                       </div>
                       <div className="p-3 space-y-3">
                         <p className="text-[10px] text-slate-300 leading-relaxed font-sans">
-                          Quantification des résultats (+40%) et ajout de <span className="text-white font-medium">TypeScript</span> pour l&apos;ATS.
+                          {t("quantification")}
                         </p>
                         <button className="w-full bg-[#2563EB] hover:bg-blue-600 text-white text-[10px] font-medium py-1.5 rounded transition-colors flex items-center justify-center gap-1.5">
-                          Appliquer <ArrowRight className="w-2.5 h-2.5" />
+                          {t("apply")} <ArrowRight className="w-2.5 h-2.5" />
                         </button>
                       </div>
                     </div>

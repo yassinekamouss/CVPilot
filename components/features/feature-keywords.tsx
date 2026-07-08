@@ -6,6 +6,7 @@ import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { Target, CheckCircle2, Loader2 } from "lucide-react";
 import ScrollRevealText from "./scroll-reveal-text";
+import { useTranslations } from "next-intl";
 
 if (typeof window !== "undefined") {
   gsap.registerPlugin(ScrollTrigger);
@@ -19,6 +20,8 @@ interface Keywords {
 }
 
 export default function FeatureKeywords() {
+  const t = useTranslations("FeatureKeywords");
+
   const visualRef = useRef<HTMLDivElement>(null);
   const [matchScore, setMatchScore] = useState(48);
   const [analyzing, setAnalyzing] = useState(false);
@@ -73,20 +76,16 @@ export default function FeatureKeywords() {
         <div className="lg:col-span-6 space-y-6">
           <div className="inline-flex items-center gap-1.5 px-3 py-1 bg-brand-blue/5 border border-brand-blue/10 text-brand-blue rounded-full text-[10px] font-bold uppercase tracking-wider">
             <Target className="w-3.5 h-3.5" />
-            <span>Ciblage Sémantique ATS</span>
+            <span>{t("badge")}</span>
           </div>
           <h2 className="font-heading text-3xl sm:text-4xl font-semibold tracking-tight text-brand-navy leading-tight">
-            Analyse d'écarts de mots-clés en temps réel
+            {t("title")}
           </h2>
           <p className="text-base sm:text-lg text-text-secondary leading-relaxed font-normal">
-            <ScrollRevealText text="Les algorithmes de recrutement filtrent les candidatures selon des critères précis. Notre outil compare votre CV avec la fiche de poste cible pour identifier instantanément les compétences techniques et méthodologiques manquantes." />
+            <ScrollRevealText text={t("description")} />
           </p>
           <ul className="space-y-4 pt-2">
-            {[
-              "Extraction sémantique directe de la fiche de poste",
-              "Diagnostic de conformité et score de matching ATS",
-              "Recommandations guidées pour combler les lacunes",
-            ].map((text) => (
+            {[t("bullet1"), t("bullet2"), t("bullet3")].map((text) => (
               <li key={text} className="flex items-center gap-3">
                 <CheckCircle2 className="w-4.5 h-4.5 text-brand-green shrink-0" />
                 <span className="text-sm font-medium text-brand-navy">{text}</span>
@@ -100,7 +99,7 @@ export default function FeatureKeywords() {
             <div className="flex items-center justify-between px-6 py-4 border-b border-border-light bg-slate-50/50">
               <div className="flex items-center gap-2">
                 <div className="w-2 h-2 rounded-full bg-brand-blue animate-pulse" />
-                <span className="text-[10px] font-bold text-brand-navy uppercase tracking-widest">Diagnostic de Correspondance</span>
+                <span className="text-[10px] font-bold text-brand-navy uppercase tracking-widest">{t("cardTitle")}</span>
               </div>
               <div className="flex items-center gap-1.5 bg-emerald-50 text-brand-green px-2.5 py-0.5 rounded-full text-xs font-bold border border-emerald-100/50">
                 <span>Match : {matchScore}%</span>
@@ -110,7 +109,7 @@ export default function FeatureKeywords() {
             <div className="p-6 space-y-6">
               <div className="grid grid-cols-2 gap-4 text-xs">
                 <div className="space-y-2">
-                  <div className="text-[9px] font-bold text-text-secondary uppercase tracking-widest">Fiche de Poste (Cible)</div>
+                  <div className="text-[9px] font-bold text-text-secondary uppercase tracking-widest">{t("jobTarget")}</div>
                   <div className="bg-brand-bg/50 p-3 rounded-xl space-y-2.5 border border-border-light/60">
                     <p className="font-semibold text-brand-navy text-[11px] truncate">Senior Frontend Dev</p>
                     <div className="flex flex-wrap gap-1">
@@ -123,7 +122,7 @@ export default function FeatureKeywords() {
                 </div>
 
                 <div className="space-y-2">
-                  <div className="text-[9px] font-bold text-text-secondary uppercase tracking-widest">Votre CV</div>
+                  <div className="text-[9px] font-bold text-text-secondary uppercase tracking-widest">{t("yourCV")}</div>
                   <div className="bg-brand-bg/50 p-3 rounded-xl space-y-2.5 border border-border-light/60">
                     <p className="font-semibold text-brand-navy text-[11px] truncate">Mon_CV_Frontend.pdf</p>
                     <div className="flex flex-wrap gap-1">
@@ -142,12 +141,10 @@ export default function FeatureKeywords() {
                 </div>
                 <div className="space-y-1">
                   <p className="text-[11px] font-bold text-brand-navy">
-                    {analyzing ? "Analyse sémantique en cours..." : "Action Corrective Recommandée"}
+                    {analyzing ? t("analyzing") : t("correctionTitle")}
                   </p>
                   <p className="text-[10px] text-text-secondary leading-relaxed">
-                    {analyzing
-                      ? "Scan des mots-clés requis et comparaison avec votre historique professionnel..."
-                      : 'Intégrez le terme "GraphQL" dans la section Projets (ex: projet Dashboard) pour augmenter la pertinence de +13%.'}
+                    {analyzing ? t("analyzingDesc") : t("correctionDesc")}
                   </p>
                 </div>
               </div>

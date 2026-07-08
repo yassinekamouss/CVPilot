@@ -1,8 +1,11 @@
 import React from "react";
 import Image from "next/image";
 import { Link } from "@/i18n/routing";
+import { getTranslations } from "next-intl/server";
 
-export default function Footer() {
+export default async function Footer() {
+  const t = await getTranslations("Footer");
+
   return (
     <footer className="bg-slate-950 text-slate-400 py-20 px-6 sm:px-8">
       <div className="mx-auto max-w-7xl">
@@ -14,45 +17,45 @@ export default function Footer() {
               </Link>
             </div>
             <p className="text-xs sm:text-sm text-slate-400 max-w-sm font-normal leading-relaxed">
-              La plateforme leader d&apos;optimisation de CV par IA. Alignez vos compétences avec les standards des recruteurs et maximisez vos chances d&apos;entretien.
+              {t("tagline")}
             </p>
           </div>
 
           <div className="md:col-span-3 flex flex-col gap-3">
-            <span className="text-white font-heading font-semibold text-[10px] uppercase tracking-wider">Produit</span>
+            <span className="text-white font-heading font-semibold text-[10px] uppercase tracking-wider">{t("productLabel")}</span>
             <a href="#templates" className="text-xs font-normal text-slate-400 hover:text-white transition-colors duration-200">
-              Modèles de CV
+              {t("cvTemplates")}
             </a>
             <a href="#features" className="text-xs font-normal text-slate-400 hover:text-white transition-colors duration-200">
-              Analyse de Score ATS
+              {t("atsScore")}
             </a>
             <a href="#how-it-works" className="text-xs font-normal text-slate-400 hover:text-white transition-colors duration-200">
-              Processus Technique
+              {t("technicalProcess")}
             </a>
           </div>
 
           <div className="md:col-span-3 flex flex-col gap-3">
-            <span className="text-white font-heading font-semibold text-[10px] uppercase tracking-wider">Entreprise</span>
+            <span className="text-white font-heading font-semibold text-[10px] uppercase tracking-wider">{t("companyLabel")}</span>
             <a href="#pricing" className="text-xs font-normal text-slate-400 hover:text-white transition-colors duration-200">
-              Tarifs
+              {t("pricing")}
             </a>
             <a href="#" className="text-xs font-normal text-slate-400 hover:text-white transition-colors duration-200">
-              Support Client
+              {t("support")}
             </a>
             <a href="#" className="text-xs font-normal text-slate-400 hover:text-white transition-colors duration-200">
-              Mentions Légales
+              {t("legal")}
             </a>
           </div>
         </div>
 
         <div className="pt-8 border-t border-slate-900 flex flex-col md:flex-row items-center justify-between gap-4 text-[10px] font-medium tracking-wide">
-          <p>© 2026 PROCV. Tous droits réservés. Optimisation ATS Professionnelle.</p>
+          <p>{t("copyright")}</p>
           <div className="flex gap-6">
             <a href="#" className="hover:text-white transition-colors duration-200">
-              Conditions Générales
+              {t("terms")}
             </a>
             <a href="#" className="hover:text-white transition-colors duration-200">
-              Politique de Confidentialité
+              {t("privacy")}
             </a>
           </div>
         </div>

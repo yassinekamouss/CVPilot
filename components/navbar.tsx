@@ -4,16 +4,19 @@ import React, { useState } from "react";
 import Image from "next/image";
 import { Menu, X, ArrowRight } from "lucide-react";
 import { Link } from "@/i18n/routing";
-
-const navLinks = [
-  { label: "Fonctionnalités", href: "#features" },
-  { label: "Modèles", href: "#templates" },
-  { label: "Tarifs", href: "#pricing" },
-  { label: "Comment ça marche", href: "#how-it-works" },
-];
+import { useTranslations } from "next-intl";
+import LanguageSwitcher from "@/components/shared/language-switcher";
 
 export default function NavBar() {
   const [isOpen, setIsOpen] = useState(false);
+  const t = useTranslations("Navbar");
+
+  const navLinks = [
+    { label: t("features"), href: "#features" },
+    { label: t("templates"), href: "#templates" },
+    { label: t("pricing"), href: "#pricing" },
+    { label: t("howItWorks"), href: "#how-it-works" },
+  ];
 
   return (
     <header className="fixed top-5 left-0 right-0 z-50 px-4 sm:px-6 md:px-8 pointer-events-none">
@@ -38,17 +41,18 @@ export default function NavBar() {
           </div>
 
           <div className="hidden sm:flex items-center gap-3 pr-2">
+            <LanguageSwitcher />
             <Link
               href="/login"
               className="text-xs font-bold text-brand-navy hover:text-brand-blue px-3 py-1.5 transition-colors duration-200"
             >
-              Connexion
+              {t("login")}
             </Link>
             <Link
               href="/login"
               className="flex items-center gap-1.5 bg-brand-navy hover:bg-brand-blue text-white text-xs font-bold px-4 py-2 rounded-full transition-all duration-300 hover:shadow-md hover:scale-[1.02] active:scale-[0.98]"
             >
-              Essai Gratuit
+              {t("freeTrial")}
               <ArrowRight className="w-3.5 h-3.5" />
             </Link>
           </div>
@@ -59,7 +63,7 @@ export default function NavBar() {
               className="inline-flex items-center justify-center rounded-full p-1.5 text-text-secondary hover:bg-brand-bg hover:text-brand-navy focus:outline-none transition-colors"
               aria-expanded={isOpen}
             >
-              <span className="sr-only">Ouvrir le menu</span>
+              <span className="sr-only">{t("openMenu")}</span>
               {isOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
             </button>
           </div>
@@ -82,19 +86,22 @@ export default function NavBar() {
           </div>
           <hr className="border-border-light" />
           <div className="flex flex-col gap-3 pt-1">
+            <div className="flex justify-center">
+              <LanguageSwitcher />
+            </div>
             <Link
               href="/login"
               onClick={() => setIsOpen(false)}
               className="w-full text-center py-2 text-sm font-bold text-brand-navy hover:bg-brand-bg rounded-lg transition-colors"
             >
-              Connexion
+              {t("login")}
             </Link>
             <Link
               href="/login"
               onClick={() => setIsOpen(false)}
               className="w-full text-center py-2.5 bg-brand-navy hover:bg-brand-blue text-white text-sm font-bold rounded-full transition-colors shadow-sm"
             >
-              Essai Gratuit
+              {t("freeTrial")}
             </Link>
           </div>
         </div>

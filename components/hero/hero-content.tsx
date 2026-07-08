@@ -7,10 +7,13 @@ import { useGSAP } from "@gsap/react";
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { Link } from "@/i18n/routing";
+import { useTranslations } from "next-intl";
 
 gsap.registerPlugin(ScrollTrigger, useGSAP);
 
 export default function HeroContent() {
+  const t = useTranslations("Hero");
+
   const containerRef = useRef<HTMLElement>(null);
   const titleLine1Ref = useRef<HTMLDivElement>(null);
   const titleLine2Ref = useRef<HTMLDivElement>(null);
@@ -130,21 +133,21 @@ export default function HeroContent() {
             <h1 className="font-heading text-4xl sm:text-5xl lg:text-[4.25rem] font-medium tracking-tight text-brand-navy leading-[1.1] max-w-3xl">
               <span ref={titleLine1Ref} className="block overflow-hidden" style={{ willChange: "transform, opacity" }}>
                 <span className="block">
-                  Décrochez{" "}
+                  {t("titleLine1")}{" "}
                   <span
                     ref={cvThumbnailRef}
                     className="inline-block w-[60px] sm:w-[85px] h-[30px] sm:h-[42px] rounded-full align-middle bg-cover bg-center mx-1 sm:mx-2 border border-brand-navy/15 shadow-sm hover:scale-110 transition-transform duration-300 cursor-help"
                     style={{ backgroundImage: "url(/cvs/cv1.jpeg)" }}
-                    title="CV Optimisé"
+                    title={t("cvAlt")}
                   />
                 </span>
               </span>
               <span ref={titleLine2Ref} className="block overflow-hidden" style={{ willChange: "transform, opacity" }}>
-                <span className="block">plus d'entretiens avec un CV optimisé pour l'ATS.</span>
+                <span className="block">{t("titleLine2")}</span>
               </span>
             </h1>
             <p ref={descRef} className="text-base sm:text-lg text-text-secondary leading-relaxed max-w-xl font-normal" style={{ willChange: "transform, opacity" }}>
-              Obtenez votre diagnostic de score ATS instantanément. Notre solution analyse la structure, les mots-clés et le contenu de votre profil pour franchir les filtres des recruteurs.
+              {t("description")}
             </p>
             <div className="flex flex-col sm:flex-row gap-4 pt-2">
               <Link
@@ -154,7 +157,7 @@ export default function HeroContent() {
                 style={{ willChange: "transform, opacity" }}
               >
                 <UploadCloud className="w-4 h-4" />
-                <span>Analyser mon CV (Gratuit)</span>
+                <span>{t("ctaPrimary")}</span>
               </Link>
               <Link
                 href="/login"
@@ -163,17 +166,17 @@ export default function HeroContent() {
                 style={{ willChange: "transform, opacity" }}
               >
                 <FileEdit className="w-4 h-4" />
-                <span>Créer un CV de zéro</span>
+                <span>{t("ctaSecondary")}</span>
               </Link>
             </div>
             <div ref={trustRef} className="flex items-center gap-6 pt-4 text-[10px] font-bold uppercase tracking-wider text-text-secondary/70" style={{ willChange: "transform, opacity" }}>
               <div className="flex items-center gap-1.5">
                 <span className="w-1.5 h-1.5 rounded-full bg-brand-green" />
-                <span>RGPD Compliant</span>
+                <span>{t("trustRGPD")}</span>
               </div>
               <div className="flex items-center gap-1.5">
                 <span className="w-1.5 h-1.5 rounded-full bg-brand-green" />
-                <span>Format PDF &amp; Word</span>
+                <span>{t("trustFormat")}</span>
               </div>
             </div>
           </div>

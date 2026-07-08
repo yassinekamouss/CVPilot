@@ -3,43 +3,45 @@
 import React, { useState } from "react";
 import Image from "next/image";
 import { ChevronRight, ShieldCheck } from "lucide-react";
-
-const templates = [
-  {
-    title: "Minimalist Executive",
-    desc: "Structure épurée à colonne unique, idéale pour la finance, le conseil et les postes de direction.",
-    image: "/cvs/cv5.jpeg",
-    color: "from-blue-500/10 to-brand-navy/20",
-  },
-  {
-    title: "Tech & Engineer",
-    desc: "Optimisé pour valoriser la maîtrise des langages, l'architecture système et les projets techniques.",
-    image: "/cvs/cv15.png",
-    color: "from-emerald-500/10 to-brand-navy/20",
-  },
-  {
-    title: "Modern Corporate",
-    desc: "Équilibre parfait avec colonne latérale pour les profils marketing, ventes et opérations.",
-    image: "/cvs/cv14.png",
-    color: "from-purple-500/10 to-brand-navy/20",
-  },
-];
+import { useTranslations } from "next-intl";
 
 export default function FeatureTemplates() {
+  const t = useTranslations("FeatureTemplates");
   const [activeTemplate, setActiveTemplate] = useState<number>(0);
+
+  const templates = [
+    {
+      title: t("template1Title"),
+      desc: t("template1Desc"),
+      image: "/cvs/cv5.jpeg",
+      color: "from-blue-500/10 to-brand-navy/20",
+    },
+    {
+      title: t("template2Title"),
+      desc: t("template2Desc"),
+      image: "/cvs/cv15.png",
+      color: "from-emerald-500/10 to-brand-navy/20",
+    },
+    {
+      title: t("template3Title"),
+      desc: t("template3Desc"),
+      image: "/cvs/cv14.png",
+      color: "from-purple-500/10 to-brand-navy/20",
+    },
+  ];
 
   return (
     <div className="mx-auto max-w-7xl px-6 sm:px-8 space-y-16">
       <div className="text-center space-y-4 max-w-2xl mx-auto">
         <div className="inline-flex items-center gap-1 text-brand-blue text-[10px] font-bold uppercase tracking-widest">
           <ShieldCheck className="w-4 h-4" />
-          <span>Formatage certifié</span>
+          <span>{t("badge")}</span>
         </div>
         <h2 className="font-heading text-3xl sm:text-4xl font-semibold tracking-tight text-brand-navy leading-tight">
-          Modèles de CV approuvés par les recruteurs
+          {t("title")}
         </h2>
         <p className="text-sm sm:text-base text-text-secondary font-normal max-w-xl mx-auto leading-relaxed">
-          Des structures de CV épurées, testées par nos ingénieurs et conçues pour être analysées à 100% par tous les systèmes ATS du marché (Workday, Taleo, Greenhouse).
+          {t("description")}
         </p>
       </div>
 
@@ -59,7 +61,9 @@ export default function FeatureTemplates() {
             }`} />
 
             <div className="relative z-10 space-y-2">
-              <span className="text-[9px] font-bold text-text-secondary uppercase tracking-widest block">Gabarit 0{idx + 1}</span>
+              <span className="text-[9px] font-bold text-text-secondary uppercase tracking-widest block">
+                {t("templateLabel", { number: idx + 1 })}
+              </span>
               <h3 className="font-heading font-semibold text-lg text-brand-navy">{tpl.title}</h3>
               <p className={`text-xs text-text-secondary leading-relaxed font-normal max-w-xs transition-all duration-500 delay-100 ${
                 activeTemplate === idx ? "md:opacity-100" : "md:opacity-0"
@@ -84,7 +88,7 @@ export default function FeatureTemplates() {
                 activeTemplate === idx ? "opacity-100" : "opacity-0"
               }`}>
                 <span className="bg-white text-brand-navy px-4 py-2 rounded-lg font-bold text-[10px] uppercase tracking-wider shadow-sm flex items-center gap-1 border border-border-light">
-                  Utiliser ce format
+                  {t("useTemplate")}
                   <ChevronRight className="w-3.5 h-3.5" />
                 </span>
               </div>

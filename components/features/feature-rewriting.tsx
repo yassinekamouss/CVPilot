@@ -6,12 +6,15 @@ import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { Sparkles, Terminal, ArrowRight, Loader2 } from "lucide-react";
 import ScrollRevealText from "./scroll-reveal-text";
+import { useTranslations } from "next-intl";
 
 if (typeof window !== "undefined") {
   gsap.registerPlugin(ScrollTrigger);
 }
 
 export default function FeatureRewriting() {
+  const t = useTranslations("FeatureRewriting");
+
   const visualRef = useRef<HTMLDivElement>(null);
   const [rewriteTab, setRewriteTab] = useState<"before" | "after">("before");
   const [optimizing, setOptimizing] = useState(false);
@@ -52,7 +55,7 @@ export default function FeatureRewriting() {
                       : "text-text-secondary hover:text-brand-navy"
                   }`}
                 >
-                  Avant
+                  {t("tabBefore")}
                 </button>
                 <button
                   onClick={() => setRewriteTab("after")}
@@ -62,7 +65,7 @@ export default function FeatureRewriting() {
                       : "text-text-secondary hover:text-brand-navy"
                   }`}
                 >
-                  Après PROCV
+                  {t("tabAfter")}
                 </button>
               </div>
               <div className="flex items-center gap-1.5 text-[9px] font-bold text-brand-blue uppercase tracking-widest">
@@ -76,26 +79,26 @@ export default function FeatureRewriting() {
                 {rewriteTab === "before" ? (
                   <div className="space-y-2.5 animate-fadeIn">
                     <div className="flex justify-between items-center">
-                      <span className="text-[9px] font-bold text-text-secondary uppercase tracking-widest">Description passive du projet</span>
-                      <span className="text-[9px] text-rose-500 font-bold bg-rose-50 px-2 py-0.5 rounded border border-rose-100">Impact faible</span>
+                      <span className="text-[9px] font-bold text-text-secondary uppercase tracking-widest">{t("beforeLabel")}</span>
+                      <span className="text-[9px] text-rose-500 font-bold bg-rose-50 px-2 py-0.5 rounded border border-rose-100">{t("beforeBadge")}</span>
                     </div>
                     <p className="text-xs text-text-secondary italic leading-relaxed border-l-2 border-slate-350 pl-3 py-1 bg-slate-50/50 rounded-r-lg">
-                      &quot;J&apos;étais responsable du développement de l&apos;application et de l&apos;encadrement de l&apos;équipe technique pour corriger les bugs.&quot;
+                      {t("beforeText")}
                     </p>
                   </div>
                 ) : (
                   <div className="space-y-2.5 animate-fadeIn">
                     <div className="flex justify-between items-center">
-                      <span className="text-[9px] font-bold text-text-secondary uppercase tracking-widest">Formulation orientée résultats (STAR)</span>
-                      <span className="text-[9px] text-emerald-700 font-bold bg-emerald-50 px-2 py-0.5 rounded border border-emerald-100">Impact maximal</span>
+                      <span className="text-[9px] font-bold text-text-secondary uppercase tracking-widest">{t("afterLabel")}</span>
+                      <span className="text-[9px] text-emerald-700 font-bold bg-emerald-50 px-2 py-0.5 rounded border border-emerald-100">{t("afterBadge")}</span>
                     </div>
                     <div className="p-3 bg-emerald-50/20 border border-emerald-100 rounded-xl space-y-2">
                       <p className="text-xs font-semibold text-brand-navy leading-relaxed">
-                        &quot;Direction d&apos;une équipe de 5 développeurs et livraison d&apos;une application SaaS sous Next.js, réduisant les temps de chargement de 40% et le taux d&apos;anomalies de 25%.&quot;
+                        {t("afterText")}
                       </p>
                       <div className="flex flex-wrap gap-1.5 pt-1.5 border-t border-emerald-150/40">
-                        <span className="text-[8px] font-bold uppercase tracking-wider text-emerald-800 bg-emerald-100/50 px-1.5 py-0.5 rounded">Action: &quot;Direction &amp; Livraison&quot;</span>
-                        <span className="text-[8px] font-bold uppercase tracking-wider text-emerald-800 bg-emerald-100/50 px-1.5 py-0.5 rounded">Mesure: &quot;-40% Chargement&quot;</span>
+                        <span className="text-[8px] font-bold uppercase tracking-wider text-emerald-800 bg-emerald-100/50 px-1.5 py-0.5 rounded">{t("afterTag1")}</span>
+                        <span className="text-[8px] font-bold uppercase tracking-wider text-emerald-800 bg-emerald-100/50 px-1.5 py-0.5 rounded">{t("afterTag2")}</span>
                       </div>
                     </div>
                   </div>
@@ -110,12 +113,12 @@ export default function FeatureRewriting() {
                 {optimizing ? (
                   <>
                     <Loader2 className="w-3.5 h-3.5 animate-spin text-white" />
-                    <span>Optimisation sémantique...</span>
+                    <span>{t("optimizing")}</span>
                   </>
                 ) : (
                   <>
                     <Sparkles className="w-3.5 h-3.5 text-brand-blue group-hover:text-white transition-colors" />
-                    <span>{rewriteTab === "after" ? "Réinitialiser" : "Optimiser la phrase"}</span>
+                    <span>{rewriteTab === "after" ? t("btnReset") : t("btnOptimize")}</span>
                   </>
                 )}
               </button>
@@ -126,17 +129,17 @@ export default function FeatureRewriting() {
         <div className="lg:col-span-6 space-y-6 order-1 lg:order-2">
           <div className="inline-flex items-center gap-1.5 px-3 py-1 bg-brand-navy/5 border border-brand-navy/10 text-brand-navy rounded-full text-[10px] font-bold uppercase tracking-wider">
             <Sparkles className="w-3.5 h-3.5 text-brand-blue" />
-            <span>Aide à la Rédaction active</span>
+            <span>{t("badge")}</span>
           </div>
           <h2 className="font-heading text-3xl sm:text-4xl font-semibold tracking-tight text-brand-navy leading-tight">
-            Mise en valeur de l'impact et des résultats
+            {t("title")}
           </h2>
           <p className="text-base sm:text-lg text-text-secondary leading-relaxed font-normal">
-            <ScrollRevealText text="Les recruteurs recherchent des accomplissements concrets, pas des listes de tâches passives. Notre module structure vos expériences selon la méthode STAR (Situation, Tâche, Action, Résultat) en y intégrant des indicateurs de performance." />
+            <ScrollRevealText text={t("description")} />
           </p>
           <div className="pt-2">
             <a href="#how-it-works" className="inline-flex items-center gap-1 text-xs font-bold text-brand-blue hover:gap-2 transition-all group">
-              <span>Découvrir la méthode de réécriture</span>
+              <span>{t("discoverLink")}</span>
               <ArrowRight className="w-3.5 h-3.5 transition-transform group-hover:translate-x-0.5" />
             </a>
           </div>

@@ -1,11 +1,14 @@
 import React from "react";
 import { Star } from "lucide-react";
+import { getTranslations } from "next-intl/server";
 
-export default function Stats() {
+export default async function Stats() {
+  const t = await getTranslations("Stats");
+
   const stats = [
-    { value: "12k+", label: "CV Optimisés" },
-    { value: "87%", label: "Taux de Passage ATS" },
-    { value: "450+", label: "Entretiens Décrochés" },
+    { value: t("stat1Value"), label: t("stat1Label") },
+    { value: t("stat2Value"), label: t("stat2Label") },
+    { value: t("stat3Value"), label: t("stat3Label") },
   ];
 
   const atsPartners = [
@@ -35,7 +38,7 @@ export default function Stats() {
               ))}
             </div>
             <p className="text-[10px] font-bold text-text-secondary uppercase tracking-wider mt-1">
-              Note 4.9/5 par nos candidats
+              {t("ratingLabel")}
             </p>
           </div>
 
@@ -60,7 +63,7 @@ export default function Stats() {
         {/* Infinite Marquee of ATS Platforms */}
         <div className="pt-4 border-t border-brand-navy/5">
           <p className="text-center text-[10px] font-bold text-text-secondary/60 uppercase tracking-widest mb-8">
-            COMPATIBILITÉ CERTIFIÉE AVEC LES PRINCIPAUX SYSTÈMES DE RECRUTEMENT (ATS)
+            {t("atsCompatibility")}
           </p>
           
           <div className="relative w-full flex items-center overflow-hidden py-4 mask-image-[linear-gradient(to_right,transparent,white_20%,white_80%,transparent)]">
