@@ -31,7 +31,7 @@ export default function FeatureTemplates() {
   ];
 
   return (
-    <div className="mx-auto max-w-7xl px-6 sm:px-8 space-y-16">
+    <div id="templates" className="mx-auto max-w-7xl px-6 sm:px-8 space-y-16">
       <div className="text-center space-y-4 max-w-2xl mx-auto">
         <div className="inline-flex items-center gap-1 text-brand-blue text-[10px] font-bold uppercase tracking-widest">
           <ShieldCheck className="w-4 h-4" />
