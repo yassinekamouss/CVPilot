@@ -49,3 +49,4 @@ dycrypt.mjs
 # AI driven coding files
 .agents/
 skills-lock.json
+.github/

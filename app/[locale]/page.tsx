@@ -1,8 +1,5 @@
 import { getTranslations, setRequestLocale } from "next-intl/server";
-import { Link } from "@/i18n/routing";
 import { auth } from "@/lib/auth/auth";
-import { APP_ROUTES } from "@/constants/routes";
-import LanguageSwitcher from "@/components/shared/language-switcher";
 
 import NavBar from "@/components/navbar";
 import Hero from "@/components/hero/hero";

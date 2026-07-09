@@ -1,6 +1,6 @@
 {
   "Landing": {
-    "title": "CVPilot | Créez votre CV avec l'IA",
+    "title": "PROCV | Créez votre CV avec l'IA",
     "heroTitle": "Construisez votre CV professionnel avec l'IA",
     "heroSubtitle": "Créez un CV percutant, optimisé pour les recruteurs et propulsé par l'intelligence artificielle.",
     "getStarted": "Commencer",
@@ -9,10 +9,10 @@
     "placeholderHero": "Espace réservé pour la maquette visuelle (Hero Section, animations, illustrations)",
     "featuresTitle": "Fonctionnalités Clés",
     "placeholderFeatures": "Espace réservé pour la grille des fonctionnalités (Générateur IA, Optimisation ATS, Analyse de mots-clés)",
-    "footer": "© 2026 CVPilot. Tous droits réservés."
+    "footer": "© 2026 PROCV. Tous droits réservés."
   },
   "Login": {
-    "title": "Bienvenue sur CVPilot",
+    "title": "Bienvenue sur PROCV",
     "subtitle": "Connectez-vous pour créer votre CV propulsé par l'IA",
     "google": "Continuer avec Google",
     "linkedin": "Continuer avec LinkedIn",
@@ -43,7 +43,7 @@
   },
   "Settings": {
     "title": "Paramètres du compte",
-    "subtitle": "Gérez les méthodes de connexion associées à votre compte CVPilot.",
+    "subtitle": "Gérez les méthodes de connexion associées à votre compte PROCV.",
     "signinMethods": "Méthodes de connexion",
     "connected": "Connecté",
     "notConnected": "Non connecté",

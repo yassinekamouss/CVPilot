@@ -42,7 +42,6 @@
     color-scheme: light;
   }
   body {
-    background-color: var(--color-brand-bg);
     color: var(--color-text-primary);
   }
 }
