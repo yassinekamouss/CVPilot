@@ -22,7 +22,7 @@ export const resumeContentSchema = z.object({
     position: z.string(),
     startDate: z.string(),
     endDate: z.string().optional(),
-    current: z.boolean().default(false),
+    current: z.boolean().optional(),
     description: z.string().optional(),
     bulletPoints: z.array(z.string()).optional(),
   })).optional(),
