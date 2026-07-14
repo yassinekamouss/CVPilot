@@ -9,7 +9,7 @@ export const SkillGrid = ({ skills }: SkillsGridProps) => {
     if (!skills || skills.length === 0) return null;
 
     return (
-        <div className="flex flex-wrap gap-3">
+        <div className="flex flex-wrap gap-2.5">
             {skills.map((skill, idx) => (
                 <SkillPill key={idx} name={skill.name} />
             ))}

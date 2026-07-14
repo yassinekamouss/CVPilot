@@ -11,7 +11,7 @@ export const Avatar = ({ src, alt = "Profile photo" }: AvatarProps) => {
         <img
             src={src}
             alt={alt}
-            className="w-full h-[280px] object-cover grayscale"
+            className="w-full h-[220px] object-cover grayscale"
         />
     );
 };

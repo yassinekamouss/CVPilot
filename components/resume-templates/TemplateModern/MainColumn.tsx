@@ -4,14 +4,13 @@ import { SectionHeading } from "./SectionHeading";
 import { EducationItem } from "./EducationItem";
 import { ExperienceItem } from "./ExperienceItem";
 import { ProjectItem } from "./ProjectItem";
-import { InterestsList } from "./InterestsList";
 
 interface MainColumnProps {
     data: ResumeContent;
 }
 
 export const MainColumn = ({ data }: MainColumnProps) => (
-    <div className="flex flex-col gap-10">
+    <div className="flex flex-col gap-8">
         <Header personalInfo={data.personalInfo} summary={data.summary} />
 
         {data.education && data.education.length > 0 && (
@@ -38,13 +37,6 @@ export const MainColumn = ({ data }: MainColumnProps) => (
                 {data.projects.map((project, idx) => (
                     <ProjectItem key={idx} project={project} />
                 ))}
-            </section>
-        )}
-
-        {data.interests && data.interests.length > 0 && (
-            <section>
-                <SectionHeading>Interests</SectionHeading>
-                <InterestsList interests={data.interests} />
             </section>
         )}
     </div>

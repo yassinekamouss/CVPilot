@@ -13,18 +13,18 @@ export const Header = ({ personalInfo, summary }: HeaderProps) => {
 
     return (
         <header>
-            <h1 className="text-6xl font-black uppercase leading-[0.95] tracking-tight text-neutral-900 break-words">
+            <h1 className="text-5xl font-black uppercase leading-[0.95] tracking-tight text-neutral-900 break-words">
                 {fullName || "Your Name"}
             </h1>
 
             {personalInfo?.jobTitle && (
-                <p className="mt-4 text-base font-extrabold uppercase tracking-wide text-neutral-900">
+                <p className="mt-3 text-sm font-extrabold uppercase tracking-wide text-neutral-900">
                     {personalInfo.jobTitle}
                 </p>
             )}
 
             {summary && (
-                <p className="mt-3 text-sm leading-relaxed text-neutral-600 max-w-[46ch]">
+                <p className="mt-2 text-sm leading-[1.45] text-neutral-600 max-w-[46ch]">
                     {summary}
                 </p>
             )}

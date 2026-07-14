@@ -7,7 +7,7 @@ interface ProjectItemProps {
 }
 
 export const ProjectItem = ({ project }: ProjectItemProps) => (
-    <div className="mb-5 last:mb-0">
+    <div className="mb-3 last:mb-0">
         <div className="flex flex-wrap items-baseline gap-x-3 gap-y-1">
             <h3 className="text-sm font-bold uppercase text-neutral-900">
                 {project.name}
@@ -26,7 +26,7 @@ export const ProjectItem = ({ project }: ProjectItemProps) => (
         </div>
 
         {project.description && (
-            <p className="mt-2 text-sm leading-relaxed text-neutral-600">
+            <p className="mt-1.5 text-sm leading-[1.45] text-neutral-600">
                 {project.description}
             </p>
         )}

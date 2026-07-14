@@ -10,7 +10,7 @@ export const LanguagesList = ({ languages }: LanguagesListProps) => {
     if (!languages || languages.length === 0) return null;
 
     return (
-        <div className="space-y-3">
+        <div className="space-y-2">
             {languages.map((language, idx) => (
                 <div key={idx} className="flex items-start justify-between gap-4">
                     <span className="text-sm font-semibold uppercase tracking-wide text-neutral-900">

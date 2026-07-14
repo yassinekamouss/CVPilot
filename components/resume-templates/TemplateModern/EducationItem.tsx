@@ -7,7 +7,7 @@ interface EducationItemProps {
 }
 
 export const EducationItem = ({ education }: EducationItemProps) => (
-    <div className="mb-5 last:mb-0">
+    <div className="mb-3 last:mb-0">
         <h3 className="text-sm font-bold uppercase text-neutral-900">
             {education.degree}
             {education.fieldOfStudy ? ` in ${education.fieldOfStudy}` : ""}
@@ -17,7 +17,7 @@ export const EducationItem = ({ education }: EducationItemProps) => (
             {education.endDate ? `-${education.endDate}` : ""}
         </p>
         {education.description && (
-            <p className="mt-1 text-sm leading-relaxed text-neutral-600">
+            <p className="mt-1 text-sm leading-[1.45] text-neutral-600">
                 {education.description}
             </p>
         )}
