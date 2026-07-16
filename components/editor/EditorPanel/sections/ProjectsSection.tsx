@@ -8,6 +8,7 @@ import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import { Plus, Trash2, GripVertical } from "lucide-react";
 import { useTranslations } from "next-intl";
+import { SectionTitle } from "./SectionTitle";
 import { AIEnhanceButton } from "../AIEnhanceButton";
 
 interface ProjectsSectionProps {
@@ -130,10 +131,4 @@ export function ProjectsSection({ control }: ProjectsSectionProps) {
   );
 }
 
-function SectionTitle({ children }: { children: React.ReactNode }) {
-  return (
-    <h2 className="mb-3 text-xs font-semibold uppercase tracking-widest text-[#64748B]">
-      {children}
-    </h2>
-  );
-}
+

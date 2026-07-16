@@ -5,6 +5,7 @@ import { ResumeContent } from "@/schemas/resume.schema";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useTranslations } from "next-intl";
+import { SectionTitle } from "./SectionTitle";
 
 interface PersonalInfoSectionProps {
   control: Control<ResumeContent>;
@@ -63,10 +64,4 @@ export function PersonalInfoSection({ control }: PersonalInfoSectionProps) {
   );
 }
 
-function SectionTitle({ children }: { children: React.ReactNode }) {
-  return (
-    <h2 className="mb-3 text-xs font-semibold uppercase tracking-widest text-[#64748B]">
-      {children}
-    </h2>
-  );
-}
+

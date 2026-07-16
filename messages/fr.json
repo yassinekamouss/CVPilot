@@ -267,6 +267,14 @@
     "tabEdit": "Modifier",
     "tabPreview": "Aperçu",
     "entry": "Élément {number}",
-    "project": "Projet {number}"
+    "project": "Projet {number}",
+    "pageOf": "Page {current} sur {total}",
+    "prevPage": "Page précédente",
+    "nextPage": "Page suivante",
+    "sectionsComplete": "{filled} / {total} sections",
+    "backToDashboard": "Retour",
+    "resumeTitle": "CV sans titre",
+    "zoomLevel": "Zoom {percent}%",
+    "pageOverflowWarning": "Votre CV s'étend maintenant sur 2 pages. Les recruteurs préfèrent généralement un CV d'une seule page — essayez de réduire le contenu."
   }
 }

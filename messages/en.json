@@ -267,6 +267,14 @@
     "tabEdit": "Edit",
     "tabPreview": "Preview",
     "entry": "Entry {number}",
-    "project": "Project {number}"
+    "project": "Project {number}",
+    "pageOf": "Page {current} of {total}",
+    "prevPage": "Previous page",
+    "nextPage": "Next page",
+    "sectionsComplete": "{filled} / {total} sections",
+    "backToDashboard": "Back",
+    "resumeTitle": "Untitled Resume",
+    "zoomLevel": "{percent}% zoom",
+    "pageOverflowWarning": "Your resume now spans 2 pages. Recruiters generally prefer a single-page resume — try trimming some content."
   }
 }

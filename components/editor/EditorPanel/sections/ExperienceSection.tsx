@@ -9,6 +9,7 @@ import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Plus, Trash2, GripVertical } from "lucide-react";
 import { useTranslations } from "next-intl";
+import { SectionTitle } from "./SectionTitle";
 import { AIEnhanceButton } from "../AIEnhanceButton";
 
 interface ExperienceSectionProps {
@@ -238,10 +239,4 @@ function ControlledInput({
   );
 }
 
-function SectionTitle({ children }: { children: React.ReactNode }) {
-  return (
-    <h2 className="mb-3 text-xs font-semibold uppercase tracking-widest text-[#64748B]">
-      {children}
-    </h2>
-  );
-}
+
