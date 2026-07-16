@@ -1,13 +1,29 @@
 "use client";
 
+/**
+ * PreviewScaler.tsx
+ *
+ * Responsibilities:
+ * 1. Compute CSS scale ratio from container width via ResizeObserver.
+ * 2. Measure the template's natural height using a hidden off-screen render.
+ * 3. Render the full resume in a scrollable workspace (like Canva/Figma) —
+ *    no more single-page clipping window.
+ * 4. Show page-break guide lines at each A4 boundary within the paper.
+ * 5. Emit totalPages upward via onTotalPages callback.
+ * 6. Call useScrollSync so preview scrolls when the active section changes.
+ */
+
 import { useRef, useEffect, useState, useCallback } from "react";
+import { SuppressResumeInteractions } from "@/components/editor/interaction/ResumeInteractionContext";
+import { useScrollSync } from "@/components/editor/interaction/useScrollSync";
 
 /** A4 paper dimensions at 96 dpi */
 const A4_WIDTH_PX = 794;
 const A4_HEIGHT_PX = 1123;
 
-/** Padding around the scaled page container */
-const VIEWPORT_PADDING = 40;
+/** Padding around the paper in the scrollable workspace */
+const WORKSPACE_PADDING_V = 28; // top + bottom
+const WORKSPACE_PADDING_H = 24;
 
 export interface PreviewScalerProps {
   children: React.ReactNode;
@@ -15,73 +31,95 @@ export interface PreviewScalerProps {
   onTotalPages: (total: number) => void;
 }
 
-/**
- * PreviewScaler
- *
- * Responsibilities (Single Responsibility Principle):
- * 1. Compute scale ratio from container width via ResizeObserver.
- * 2. Measure the template's natural rendered height to determine total A4 pages.
- * 3. Show only one A4 page at a time via a clipping window + translateY offset.
- * 4. Render page-break guide lines between pages in the visible area.
- * 5. Emit totalPages upward via onTotalPages callback.
- */
-export function PreviewScaler({ children, currentPage, onTotalPages }: PreviewScalerProps) {
+export function PreviewScaler({
+  children,
+  currentPage,
+  onTotalPages,
+}: PreviewScalerProps) {
+  /** Outer measurement/sizing container (full available width) */
   const containerRef = useRef<HTMLDivElement>(null);
+
+  /** Hidden off-screen render — used to measure the template's natural height */
   const hiddenRef = useRef<HTMLDivElement>(null);
+
+  /** The scrollable workspace div — passed to useScrollSync */
+  const scrollContainerRef = useRef<HTMLDivElement>(null);
+
   const [scale, setScale] = useState(1);
+  const [naturalHeight, setNaturalHeight] = useState(A4_HEIGHT_PX);
   const [totalPages, setTotalPages] = useState(1);
 
-  /** Measure the template's natural height using a hidden off-screen render */
+  // ─── Measurements ────────────────────────────────────────────────────────
+
   const measurePages = useCallback(() => {
     if (!hiddenRef.current) return;
-    const naturalHeight = hiddenRef.current.scrollHeight;
-    const pages = Math.max(1, Math.ceil(naturalHeight / A4_HEIGHT_PX));
+    const h = hiddenRef.current.scrollHeight;
+    const pages = Math.max(1, Math.ceil(h / A4_HEIGHT_PX));
+    setNaturalHeight(h);
     setTotalPages(pages);
     onTotalPages(pages);
   }, [onTotalPages]);
 
-  /** Compute the CSS scale factor to fit the A4 width into the container */
   const updateScale = useCallback(() => {
     if (!containerRef.current) return;
     const { width } = containerRef.current.getBoundingClientRect();
-    const scaleFactor = (width - VIEWPORT_PADDING) / A4_WIDTH_PX;
-    setScale(Math.min(scaleFactor, 1));
+    const available = width - WORKSPACE_PADDING_H * 2;
+    setScale(Math.min(available / A4_WIDTH_PX, 1));
   }, []);
 
   useEffect(() => {
     updateScale();
     measurePages();
 
-    const resizeObserver = new ResizeObserver(() => {
+    const ro = new ResizeObserver(() => {
       updateScale();
       measurePages();
     });
 
-    if (containerRef.current) resizeObserver.observe(containerRef.current);
-    if (hiddenRef.current) resizeObserver.observe(hiddenRef.current);
+    if (containerRef.current) ro.observe(containerRef.current);
+    if (hiddenRef.current) ro.observe(hiddenRef.current);
 
-    return () => resizeObserver.disconnect();
+    return () => ro.disconnect();
   }, [updateScale, measurePages, children]);
 
-  // The visible page offset in the template's coordinate space (pre-scale)
-  const pageOffsetY = (currentPage - 1) * A4_HEIGHT_PX;
+  // ─── Scroll to page (via page-nav buttons in header) ─────────────────────
 
-  // The total scaled height of the visible A4 window
-  const scaledWindowHeight = A4_HEIGHT_PX * scale;
+  useEffect(() => {
+    const container = scrollContainerRef.current;
+    if (!container) return;
+    const targetScrollTop =
+      (currentPage - 1) * A4_HEIGHT_PX * scale + WORKSPACE_PADDING_V;
+    container.scrollTo({ top: targetScrollTop, behavior: "smooth" });
+  }, [currentPage, scale]);
+
+  // ─── Scroll sync (editor → preview section) ──────────────────────────────
+
+  useScrollSync({
+    containerRef: scrollContainerRef,
+    scale,
+    paddingTop: WORKSPACE_PADDING_V,
+  });
+
+  // ─── Derived values ───────────────────────────────────────────────────────
+
+  const scaledWidth = A4_WIDTH_PX * scale;
+  const scaledHeight = naturalHeight * scale;
 
   return (
     <div
       ref={containerRef}
-      className="relative w-full h-full overflow-hidden flex flex-col items-center bg-[#F1F5F9]"
+      className="relative w-full h-full"
+      aria-label="Resume preview"
     >
-      {/* ─── Hidden measurement render ─── */}
+      {/* ─── Hidden measurement render ──────────────────────────────────── */}
       {/*
-        Rendered off-screen with no clipping so scrollHeight reflects the
-        template's true content height. Invisible to the user.
+        Rendered off-screen at native A4 width so scrollHeight reflects the
+        true content height. Wrapped in SuppressResumeInteractions so the
+        ResumeSection nodes here do NOT compete with the visible render
+        when registering their refs.
       */}
       <div
         aria-hidden="true"
-        className="absolute pointer-events-none"
         style={{
           position: "absolute",
           top: 0,
@@ -89,57 +127,76 @@ export function PreviewScaler({ children, currentPage, onTotalPages }: PreviewSc
           width: `${A4_WIDTH_PX}px`,
           visibility: "hidden",
           zIndex: -1,
+          pointerEvents: "none",
         }}
       >
-        <div ref={hiddenRef}>
-          {children}
-        </div>
+        <SuppressResumeInteractions>
+          <div ref={hiddenRef}>{children}</div>
+        </SuppressResumeInteractions>
       </div>
 
-      {/* ─── Visible scaled A4 window ─── */}
+      {/* ─── Scrollable workspace ───────────────────────────────────────── */}
       <div
-        className="overflow-hidden flex-shrink-0 rounded-sm shadow-2xl"
-        style={{
-          width: `${A4_WIDTH_PX * scale}px`,
-          height: `${scaledWindowHeight}px`,
-          marginTop: `${VIEWPORT_PADDING / 2}px`,
-        }}
+        ref={scrollContainerRef}
+        className="preview-workspace w-full h-full overflow-y-auto overflow-x-hidden"
+        style={{ scrollBehavior: "smooth" }}
       >
-        {/*
-          The template itself is rendered at its native 794px width, then
-          scaled down and clipped. The translateY shifts it to show the
-          correct page, with a smooth animated transition.
-        */}
+        {/* Centre column — always at least as tall as the viewport */}
         <div
           style={{
-            width: `${A4_WIDTH_PX}px`,
-            transformOrigin: "top left",
-            transform: `scale(${scale}) translateY(-${pageOffsetY}px)`,
-            transition: "transform 300ms ease-in-out",
-            willChange: "transform",
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "center",
+            paddingTop: WORKSPACE_PADDING_V,
+            paddingBottom: WORKSPACE_PADDING_V * 2,
+            minHeight: "100%",
           }}
         >
-          {children}
+          {/* ── The A4 paper ── */}
+          <div
+            className="preview-paper"
+            style={{
+              width: scaledWidth,
+              height: scaledHeight,
+              position: "relative",
+              flexShrink: 0,
+              overflow: "hidden",
+            }}
+          >
+            {/* Template rendered at native width, then CSS-scaled down */}
+            <div
+              style={{
+                width: A4_WIDTH_PX,
+                transformOrigin: "top left",
+                transform: `scale(${scale})`,
+                position: "absolute",
+                top: 0,
+                left: 0,
+              }}
+            >
+              {children}
+            </div>
+
+            {/* Page-break guide lines (inside the paper) */}
+            {totalPages > 1 &&
+              Array.from({ length: totalPages - 1 }).map((_, i) => (
+                <PageBreakLine
+                  key={i}
+                  offsetY={(i + 1) * A4_HEIGHT_PX * scale}
+                />
+              ))}
+          </div>
+
+          {/* Page label below paper */}
+          {totalPages > 1 && (
+            <div className="mt-2 text-[10px] font-medium text-[#94A3B8] select-none">
+              {totalPages} pages
+            </div>
+          )}
         </div>
       </div>
 
-      {/* ─── Page-break guide lines (shown below the clipping window) ─── */}
-      {/*
-        We render visual guide dashes below the live window, one per break.
-        They sit in the same horizontal column as the scaled page.
-      */}
-      {totalPages > 1 && (
-        <div
-          className="flex flex-col items-center w-full mt-2 gap-1"
-          style={{ width: `${A4_WIDTH_PX * scale}px` }}
-        >
-          {Array.from({ length: totalPages - 1 }).map((_, i) => (
-            <PageBreakGuide key={i} pageNumber={i + 1} totalPages={totalPages} />
-          ))}
-        </div>
-      )}
-
-      {/* ─── Zoom chip ─── */}
+      {/* Zoom chip — always visible */}
       <ZoomChip scale={scale} />
     </div>
   );
@@ -147,35 +204,30 @@ export function PreviewScaler({ children, currentPage, onTotalPages }: PreviewSc
 
 // ─── Sub-components ──────────────────────────────────────────────────────────
 
-interface PageBreakGuideProps {
-  pageNumber: number;
-  totalPages: number;
-}
-
-/**
- * A visual separator indicating where one A4 page ends and the next begins.
- * Styled as a subtle dashed rule, similar to Canva's page break indicator.
- */
-function PageBreakGuide({ pageNumber, totalPages }: PageBreakGuideProps) {
+/** Horizontal dashed rule at the A4 page boundary, overlaid on the paper */
+function PageBreakLine({ offsetY }: { offsetY: number }) {
   return (
-    <div className="flex items-center gap-2 w-full py-0.5">
-      <div className="flex-1 border-t border-dashed border-red-300/60" />
-      <span className="text-[10px] font-medium text-red-400/80 whitespace-nowrap select-none">
-        Page {pageNumber} / {totalPages}
-      </span>
-      <div className="flex-1 border-t border-dashed border-red-300/60" />
-    </div>
+    <div
+      aria-hidden="true"
+      style={{
+        position: "absolute",
+        top: offsetY,
+        left: 0,
+        right: 0,
+        height: "2px",
+        background:
+          "repeating-linear-gradient(90deg, rgba(239,68,68,0.45) 0px, rgba(239,68,68,0.45) 6px, transparent 6px, transparent 10px)",
+        zIndex: 2,
+        pointerEvents: "none",
+      }}
+    />
   );
 }
 
-interface ZoomChipProps {
-  scale: number;
-}
-
-/** Small read-only chip showing the current zoom percentage. */
-function ZoomChip({ scale }: ZoomChipProps) {
+/** Small read-only chip showing the current zoom percentage */
+function ZoomChip({ scale }: { scale: number }) {
   return (
-    <div className="absolute bottom-3 right-3 bg-white/80 backdrop-blur-sm border border-[#E2E8F0] rounded-full px-2.5 py-1 text-[10px] font-semibold text-[#64748B] shadow-sm select-none">
+    <div className="absolute bottom-3 right-3 bg-white/90 backdrop-blur-sm border border-[#E2E8F0] rounded-full px-2.5 py-1 text-[10px] font-semibold text-[#64748B] shadow-sm select-none pointer-events-none z-10">
       {Math.round(scale * 100)}%
     </div>
   );

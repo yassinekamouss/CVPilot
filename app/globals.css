@@ -122,3 +122,115 @@
 .animate-slideUpFade {
   animation: slideUpFade 0.35s cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
+
+/* ─── Resume Section Interactions ─────────────────────────────────────────── */
+
+/**
+ * Base class for all interactive resume sections.
+ * Applied by <ResumeSection> automatically.
+ */
+.resume-section {
+  position: relative;
+  border-radius: 4px;
+  transition: transform 200ms ease-out, box-shadow 200ms ease-out,
+    opacity 200ms ease-out, background-color 200ms ease-out,
+    outline 200ms ease-out;
+  outline: 2px solid transparent;
+  cursor: pointer;
+}
+
+/** Active section: subtle scale + blue accent outline */
+.section-active {
+  transform: scale(1.02);
+  outline: 2px solid rgba(37, 99, 235, 0.5);
+  box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.06),
+    0 4px 16px rgba(37, 99, 235, 0.12);
+  z-index: 1;
+}
+
+/** Hovered section (not active): soft background lift */
+.section-hovered {
+  background-color: rgba(37, 99, 235, 0.025);
+  outline: 1.5px solid rgba(37, 99, 235, 0.2);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+  z-index: 1;
+}
+
+/** Other sections when something else is hovered */
+.section-dimmed {
+  opacity: 0.55;
+}
+
+/* ─── Edit Chip ───────────────────────────────────────────────────────────── */
+
+/**
+ * Small floating edit affordance shown on preview section hover.
+ * Communicates "this section is interactive."
+ */
+.edit-chip {
+  position: absolute;
+  top: -1px;
+  right: 4px;
+  display: flex;
+  align-items: center;
+  gap: 3px;
+  padding: 2px 7px 2px 5px;
+  background: #2563eb;
+  color: #fff;
+  font-size: 9px;
+  font-weight: 600;
+  font-family: var(--font-sans);
+  border-radius: 4px;
+  letter-spacing: 0.02em;
+  pointer-events: none;
+  z-index: 10;
+  box-shadow: 0 1px 4px rgba(37, 99, 235, 0.3);
+  animation: editChipIn 150ms ease-out forwards;
+}
+
+@keyframes editChipIn {
+  from {
+    opacity: 0;
+    transform: translateY(-3px) scale(0.92);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+/* ─── Preview Workspace ───────────────────────────────────────────────────── */
+
+/** The scrollable workspace canvas around the A4 paper */
+.preview-workspace {
+  background: #dde1e7;
+  background-image: radial-gradient(circle, #c8cdd5 1px, transparent 1px);
+  background-size: 20px 20px;
+}
+
+/** The A4 paper itself — elevated above the workspace */
+.preview-paper {
+  background: white;
+  border-radius: 2px;
+  box-shadow:
+    0 1px 3px rgba(0, 0, 0, 0.06),
+    0 4px 12px rgba(0, 0, 0, 0.1),
+    0 12px 40px rgba(0, 0, 0, 0.12);
+}
+
+/* ─── Reduced Motion ──────────────────────────────────────────────────────── */
+
+@media (prefers-reduced-motion: reduce) {
+  .resume-section,
+  .section-active,
+  .section-hovered,
+  .section-dimmed {
+    transition: none !important;
+    transform: none !important;
+    animation: none !important;
+  }
+
+  .edit-chip {
+    animation: none !important;
+  }
+}

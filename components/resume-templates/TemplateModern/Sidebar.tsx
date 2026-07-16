@@ -1,3 +1,5 @@
+"use client";
+
 import { ResumeContent } from "@/schemas/resume.schema";
 import { Avatar } from "./Avatar";
 import { SectionHeading } from "./SectionHeading";
@@ -5,6 +7,7 @@ import { SkillGrid } from "./SkillGrid";
 import { CertificationItem } from "./CertificationItem";
 import { InterestsList } from "./InterestsList";
 import { LanguagesList } from "./LanguagesList";
+import { ResumeSection } from "@/components/editor/interaction/ResumeSection";
 
 interface SidebarProps {
     data: ResumeContent;
@@ -12,39 +15,40 @@ interface SidebarProps {
 
 export const Sidebar = ({ data }: SidebarProps) => (
     <div className="flex flex-col gap-8">
+        {/* Avatar is part of personalInfo — not a separate section */}
         <Avatar
             src={data.personalInfo?.avatar}
             alt={`${data.personalInfo?.firstName ?? ""} ${data.personalInfo?.lastName ?? ""}`.trim()}
         />
 
         {data.skills && data.skills.length > 0 && (
-            <section>
+            <ResumeSection id="skills">
                 <SectionHeading>Skills</SectionHeading>
                 <SkillGrid skills={data.skills} />
-            </section>
+            </ResumeSection>
         )}
 
         {data.interests && data.interests.length > 0 && (
-            <section>
+            <ResumeSection id="interests">
                 <SectionHeading>Interests</SectionHeading>
                 <InterestsList interests={data.interests} />
-            </section>
+            </ResumeSection>
         )}
 
         {data.certifications && data.certifications.length > 0 && (
-            <section>
+            <ResumeSection id="certifications">
                 <SectionHeading>Certifications</SectionHeading>
                 {data.certifications.map((cert, idx) => (
                     <CertificationItem key={idx} certification={cert} />
                 ))}
-            </section>
+            </ResumeSection>
         )}
 
         {data.languages && data.languages.length > 0 && (
-            <section>
+            <ResumeSection id="languages">
                 <SectionHeading>Languages</SectionHeading>
                 <LanguagesList languages={data.languages} />
-            </section>
+            </ResumeSection>
         )}
     </div>
 );

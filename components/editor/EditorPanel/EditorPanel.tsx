@@ -23,20 +23,21 @@ import {
   FolderGit,
   Heart,
 } from "lucide-react";
+import {
+  useResumeInteraction,
+  type SectionId,
+} from "@/components/editor/interaction/ResumeInteractionContext";
 
 interface EditorPanelProps {
   control: Control<ResumeContent>;
-  activeSection: string;
-  setActiveSection: (section: string) => void;
   /** Live form data used to compute per-section completion dots */
   liveData: ResumeContent;
 }
 
 interface SectionConfig {
-  id: string;
+  id: SectionId;
   labelKey: string;
   icon: React.ElementType;
-  /** Returns true if this section has at least one meaningful value */
   hasSomeContent: (data: ResumeContent) => boolean;
 }
 
@@ -105,14 +106,13 @@ const SECTIONS: SectionConfig[] = [
  * - Render the dark sidebar with icon navigation.
  * - Show a completion dot on each icon when the section has content.
  * - Render the active section form in the main scroll area.
+ * - Read activeSection and focusSection from ResumeInteractionContext
+ *   (no more prop drilling from EditorShell).
  */
-export function EditorPanel({
-  control,
-  activeSection,
-  setActiveSection,
-  liveData,
-}: EditorPanelProps) {
+export function EditorPanel({ control, liveData }: EditorPanelProps) {
   const t = useTranslations("Builder");
+  // Read from the central interaction context — no props needed
+  const { activeSection, focusSection } = useResumeInteraction();
 
   return (
     <div className="flex flex-1 overflow-hidden h-full bg-[#F8FAFC]">
@@ -129,7 +129,7 @@ export function EditorPanel({
               isDone={isDone}
               label={t(sec.labelKey)}
               icon={sec.icon}
-              onClick={() => setActiveSection(sec.id)}
+              onClick={() => focusSection(sec.id)}
             />
           );
         })}
@@ -137,7 +137,7 @@ export function EditorPanel({
 
       {/* ─── Active section form ─── */}
       <main className="flex-1 overflow-y-auto px-4 py-6 md:px-6 md:py-8 scroll-smooth pb-24">
-        <div className="animate-fadeInSlide">
+        <div className="animate-fadeInSlide" key={activeSection}>
           {activeSection === "personalInfo" && <PersonalInfoSection control={control} />}
           {activeSection === "summary" && <SummarySection control={control} />}
           {activeSection === "experience" && <ExperienceSection control={control} />}
@@ -186,9 +186,11 @@ function SidebarButton({ isActive, isDone, label, icon: Icon, onClick }: Sidebar
         type="button"
         onClick={onClick}
         aria-label={label}
+        aria-pressed={isActive}
         className={[
           "w-[52px] h-[52px] sm:w-[56px] sm:h-[56px] rounded-xl flex items-center justify-center",
           "cursor-pointer transition-all duration-200 relative outline-none group",
+          "focus-visible:ring-2 focus-visible:ring-[#2563EB] focus-visible:ring-offset-2 focus-visible:ring-offset-[#0B132B]",
           isActive
             ? "bg-[#2563EB]/15 text-white"
             : "text-[#94A3B8] hover:text-white hover:bg-[#1D2D44]/60",
