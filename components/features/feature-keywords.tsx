@@ -64,10 +64,9 @@ export default function FeatureKeywords() {
   });
 
   const pillClass = (matched: boolean) =>
-    `px-1.5 py-0.5 rounded text-[9px] font-semibold border transition-all duration-300 ${
-      matched
-        ? "bg-emerald-50 text-brand-green border-emerald-200"
-        : "bg-slate-100 text-text-secondary/40 border-transparent"
+    `px-1.5 py-0.5 rounded text-[9px] font-semibold border transition-all duration-300 ${matched
+      ? "bg-emerald-50 text-brand-green border-emerald-200"
+      : "bg-slate-100 text-text-secondary/40 border-transparent"
     }`;
 
   return (

@@ -1,10 +1,13 @@
 "use client";
 
+import React, { useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { resumeContentSchema, type ResumeContent } from "@/schemas/resume.schema";
 import { EditorPanel } from "./EditorPanel/EditorPanel";
 import { PreviewPanel } from "./PreviewPanel/PreviewPanel";
+import { TemplateModern } from "@/components/resume-templates/TemplateModern/TemplateModern";
+import { useTranslations } from "next-intl";
 
 interface EditorShellProps {
   resumeId: string;
@@ -78,7 +81,11 @@ const DEFAULT_VALUES: ResumeContent = {
 };
 
 export function EditorShell({ resumeId }: EditorShellProps) {
-  const { control, register, watch } = useForm<ResumeContent>({
+  const t = useTranslations("Builder");
+  const [activeSection, setActiveSection] = useState("personalInfo");
+  const [activeTab, setActiveTab] = useState<"edit" | "preview">("edit");
+
+  const { control, watch } = useForm<ResumeContent>({
     resolver: zodResolver(resumeContentSchema),
     defaultValues: DEFAULT_VALUES,
     mode: "onChange",
@@ -87,12 +94,54 @@ export function EditorShell({ resumeId }: EditorShellProps) {
   const liveData = watch();
 
   return (
-    <div className="flex h-screen w-screen overflow-hidden bg-white">
-      {/* Editor Panel (Left Column) */}
-      <EditorPanel control={control} register={register} />
+    <div className="flex h-screen w-screen overflow-hidden bg-[#F1F5F9] md:bg-white flex-col md:flex-row">
+      {/* Mobile Top Navigation (Toggle between Edit and Preview) */}
+      <div className="flex md:hidden items-center justify-between border-b border-[#E2E8F0] bg-white px-4 py-2.5 flex-shrink-0">
+        <h1 className="text-sm font-bold text-[#0B132B]">{t("liveEditor")}</h1>
+        <div className="flex bg-[#F1F5F9] p-0.5 rounded-lg border border-[#E2E8F0]">
+          <button
+            type="button"
+            onClick={() => setActiveTab("edit")}
+            className={`px-3 py-1 text-xs font-semibold rounded-md transition-all cursor-pointer ${
+              activeTab === "edit" ? "bg-white shadow-sm text-[#0B132B]" : "text-[#64748B]"
+            }`}
+          >
+            {t("tabEdit")}
+          </button>
+          <button
+            type="button"
+            onClick={() => setActiveTab("preview")}
+            className={`px-3 py-1 text-xs font-semibold rounded-md transition-all cursor-pointer ${
+              activeTab === "preview" ? "bg-white shadow-sm text-[#0B132B]" : "text-[#64748B]"
+            }`}
+          >
+            {t("tabPreview")}
+          </button>
+        </div>
+      </div>
 
-      {/* Preview Panel (Right Column) */}
-      <PreviewPanel data={liveData} />
+      {/* Main Panel Containers */}
+      <div className="flex-1 flex overflow-hidden">
+        {/* Editor (Left Pane) - Display on Mobile Edit tab, or Desktop always */}
+        <div className={`w-full md:w-[460px] lg:w-[500px] flex-shrink-0 border-r border-[#E2E8F0] ${
+          activeTab === "edit" ? "flex" : "hidden md:flex"
+        }`}>
+          <EditorPanel
+            control={control}
+            activeSection={activeSection}
+            setActiveSection={setActiveSection}
+          />
+        </div>
+
+        {/* Live Preview (Right Pane) - Display on Mobile Preview tab, or Desktop always */}
+        <div className={`flex-1 ${
+          activeTab === "preview" ? "flex" : "hidden md:flex"
+        }`}>
+          <PreviewPanel data={liveData}>
+            <TemplateModern data={liveData} />
+          </PreviewPanel>
+        </div>
+      </div>
     </div>
   );
 }

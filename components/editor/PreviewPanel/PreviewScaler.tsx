@@ -4,35 +4,42 @@ import { useRef, useEffect, useState } from "react";
 
 export function PreviewScaler({ children }: { children: React.ReactNode }) {
   const containerRef = useRef<HTMLDivElement>(null);
-  const [scale, setScale] = useState(0.6);
+  const [scale, setScale] = useState(1);
 
   useEffect(() => {
-    const update = () => {
+    const updateScale = () => {
       if (!containerRef.current) return;
-      const { width, height } = containerRef.current.getBoundingClientRect();
-      const A4_W = 794; // px equivalent of 210mm at 96dpi
-      const A4_H = 1123; // px equivalent of 297mm at 96dpi
-      const padding = 32;
-      const scaleX = (width - padding) / A4_W;
-      const scaleY = (height - padding) / A4_H;
-      setScale(Math.min(scaleX, scaleY, 1)); // don't scale up past original size
+      const { width } = containerRef.current.getBoundingClientRect();
+      const A4_WIDTH_PX = 794; // px equivalent of 210mm at 96dpi
+      const padding = 32; // padding around the scaled page
+      
+      // Calculate scale ratio based strictly on parent width
+      const scaleFactor = (width - padding) / A4_WIDTH_PX;
+      
+      // Prevent scaling past original scale 1 to maintain crispness
+      setScale(Math.min(scaleFactor, 1));
     };
-    update();
-    const ro = new ResizeObserver(update);
-    if (containerRef.current) ro.observe(containerRef.current);
-    return () => ro.disconnect();
+
+    updateScale();
+    const resizeObserver = new ResizeObserver(updateScale);
+    if (containerRef.current) resizeObserver.observe(containerRef.current);
+    
+    return () => resizeObserver.disconnect();
   }, []);
 
   return (
-    <div ref={containerRef} className="w-full h-full flex items-center justify-center overflow-hidden p-4">
+    <div
+      ref={containerRef}
+      className="w-full h-full overflow-y-auto overflow-x-hidden p-6 flex justify-center bg-[#F1F5F9] scrollbar-thin"
+    >
       <div
         style={{
           transform: `scale(${scale})`,
-          transformOrigin: "center center",
+          transformOrigin: "top center",
           width: "794px",
-          height: "1123px",
+          minHeight: "1123px",
         }}
-        className="flex-shrink-0 shadow-lg transition-transform duration-200"
+        className="flex-shrink-0 shadow-xl transition-all duration-300 bg-white"
       >
         {children}
       </div>

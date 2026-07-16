@@ -84,3 +84,9 @@
 .animate-giantPulse {
   animation: giantPulse 6s ease-in-out infinite;
 }
+
+/* Page break rules for resume item blocks */
+.preview-page-break-avoid {
+  break-inside: avoid !important;
+  page-break-inside: avoid !important;
+}

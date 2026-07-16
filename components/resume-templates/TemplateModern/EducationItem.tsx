@@ -7,7 +7,7 @@ interface EducationItemProps {
 }
 
 export const EducationItem = ({ education }: EducationItemProps) => (
-    <div className="mb-3 last:mb-0">
+    <div className="mb-3 last:mb-0 preview-page-break-avoid">
         <h3 className="text-sm font-bold uppercase text-neutral-900">
             {education.degree}
             {education.fieldOfStudy ? ` in ${education.fieldOfStudy}` : ""}

@@ -7,7 +7,7 @@ interface CertificationItemProps {
 }
 
 export const CertificationItem = ({ certification }: CertificationItemProps) => (
-    <div className="mb-5 last:mb-0">
+    <div className="mb-5 last:mb-0 preview-page-break-avoid">
         <h3 className="text-sm font-bold uppercase text-neutral-900">
             {certification.name}
         </h3>
