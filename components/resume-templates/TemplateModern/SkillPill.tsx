@@ -3,7 +3,7 @@ interface SkillPillProps {
 }
 
 export const SkillPill = ({ name }: SkillPillProps) => (
-    <span className="inline-flex items-center justify-center px-4 py-2 rounded-full border border-neutral-800 text-sm text-neutral-800 whitespace-nowrap">
+    <span className="inline-flex items-center justify-center px-2 py-0.5 rounded-sm bg-neutral-100 text-[9pt] text-neutral-800 whitespace-nowrap">
         {name}
     </span>
 );

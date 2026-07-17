@@ -13,7 +13,7 @@ interface MainColumnProps {
 }
 
 export const MainColumn = ({ data }: MainColumnProps) => (
-    <div className="flex flex-col gap-8">
+    <div className="flex flex-col gap-4">
         {/* personalInfo + summary live together in the Header */}
         <ResumeSection id="personalInfo">
             <Header personalInfo={data.personalInfo} summary={data.summary} />

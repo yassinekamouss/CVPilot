@@ -10,14 +10,12 @@ export const ContactList = ({ personalInfo }: ContactListProps) => {
     if (!personalInfo) return null;
 
     return (
-        <div className="grid grid-cols-2 gap-x-5 gap-y-2 mt-4">
+        <div className="flex flex-row flex-wrap items-center gap-x-3 gap-y-0.5 mt-2">
             <ContactItem icon={<PhoneIcon />} label={personalInfo.phone} />
+            {personalInfo.phone && personalInfo.location && <span className="text-neutral-400 text-[9pt]">|</span>}
             <ContactItem icon={<MapPinIcon />} label={personalInfo.location} />
-            <ContactItem
-                icon={<MailIcon />}
-                label={personalInfo.email}
-                className="col-span-2"
-            />
+            {(personalInfo.phone || personalInfo.location) && personalInfo.email && <span className="text-neutral-400 text-[9pt]">|</span>}
+            <ContactItem icon={<MailIcon />} label={personalInfo.email} />
         </div>
     );
 };

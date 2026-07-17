@@ -9,7 +9,7 @@ interface TemplateModernProps {
 export const TemplateModern = ({ data }: TemplateModernProps) => {
     return (
         <div
-            className="w-[210mm] min-h-[297mm] bg-[#f5f0e8] text-neutral-900 font-sans px-12 py-10 grid grid-cols-[1.55fr_1fr] gap-x-10"
+            className="w-[210mm] min-h-[297mm] bg-white text-neutral-900 font-sans text-[10.5pt] leading-snug px-8 py-7 grid grid-cols-[2.6fr_1fr] gap-x-6"
         >
             <MainColumn data={data} />
             <Sidebar data={data} />

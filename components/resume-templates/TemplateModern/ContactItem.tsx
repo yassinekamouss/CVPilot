@@ -7,11 +7,9 @@ interface ContactItemProps {
 export const ContactItem = ({ icon, label, className = "" }: ContactItemProps) => {
     if (!label) return null;
     return (
-        <div className={`flex items-center gap-2.5 ${className}`}>
-            <span className="flex items-center justify-center w-7 h-7 rounded-full border border-neutral-800 text-neutral-800 shrink-0">
-                {icon}
-            </span>
-            <span className="text-sm text-neutral-800 break-words">{label}</span>
+        <div className={`flex items-center gap-1 ${className}`}>
+            <span className="text-neutral-500 shrink-0 flex items-center">{icon}</span>
+            <span className="text-[9pt] text-neutral-700 break-words">{label}</span>
         </div>
     );
 };

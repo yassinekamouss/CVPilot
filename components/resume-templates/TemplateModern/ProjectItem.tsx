@@ -7,9 +7,9 @@ interface ProjectItemProps {
 }
 
 export const ProjectItem = ({ project }: ProjectItemProps) => (
-    <div className="mb-3 last:mb-0 preview-page-break-avoid">
-        <div className="flex flex-wrap items-baseline gap-x-3 gap-y-1">
-            <h3 className="text-sm font-bold uppercase text-neutral-900">
+    <div className="mb-2.5 last:mb-0 preview-page-break-avoid">
+        <div className="flex flex-wrap items-baseline gap-x-2 gap-y-0.5">
+            <h3 className="text-[9.5pt] font-bold uppercase text-neutral-900 leading-tight">
                 {project.name}
             </h3>
 
@@ -18,15 +18,15 @@ export const ProjectItem = ({ project }: ProjectItemProps) => (
                     href={project.link}
                     target="_blank"
                     rel="noreferrer"
-                    className="text-xs font-semibold uppercase tracking-wide text-neutral-700 underline decoration-neutral-400 underline-offset-4"
+                    className="text-[8pt] font-semibold uppercase tracking-widest text-neutral-500 underline decoration-neutral-300 underline-offset-2"
                 >
-                    View link
+                    Link
                 </a>
             )}
         </div>
 
         {project.description && (
-            <p className="mt-1.5 text-sm leading-[1.45] text-neutral-600">
+            <p className="mt-1 text-[9pt] leading-snug text-neutral-600">
                 {project.description}
             </p>
         )}

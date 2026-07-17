@@ -7,25 +7,28 @@ interface ExperienceItemProps {
 }
 
 export const ExperienceItem = ({ experience }: ExperienceItemProps) => (
-    <div className="mb-4 last:mb-0 preview-page-break-avoid">
-        <h3 className="text-sm font-bold uppercase text-neutral-900">
-            {experience.position}
-        </h3>
-        <p className="text-sm italic text-neutral-700">
-            {experience.company} | {experience.startDate}
-            {experience.current ? " - Present" : experience.endDate ? `-${experience.endDate}` : ""}
-        </p>
+    <div className="mb-2.5 last:mb-0 preview-page-break-avoid">
+        <div className="flex items-baseline justify-between gap-2">
+            <h3 className="text-[9.5pt] font-bold uppercase text-neutral-900 leading-tight">
+                {experience.position}
+            </h3>
+            <span className="text-[8.5pt] text-neutral-500 shrink-0">
+                {experience.startDate}
+                {experience.current ? " – Present" : experience.endDate ? ` – ${experience.endDate}` : ""}
+            </span>
+        </div>
+        <p className="text-[9pt] italic text-neutral-600 leading-tight">{experience.company}</p>
 
         {experience.description && (
-            <p className="mt-1.5 text-sm leading-[1.45] text-neutral-600">
+            <p className="mt-1 text-[9pt] leading-snug text-neutral-600">
                 {experience.description}
             </p>
         )}
 
         {experience.bulletPoints && experience.bulletPoints.length > 0 && (
-            <ul className="mt-1.5 space-y-1.5">
+            <ul className="mt-1 space-y-0.5 pl-3">
                 {experience.bulletPoints.map((point, idx) => (
-                    <li key={idx} className="text-sm leading-relaxed text-neutral-600">
+                    <li key={idx} className="text-[9pt] leading-snug text-neutral-600 list-disc list-outside">
                         {point}
                     </li>
                 ))}

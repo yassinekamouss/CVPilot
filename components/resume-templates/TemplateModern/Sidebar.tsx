@@ -14,7 +14,7 @@ interface SidebarProps {
 }
 
 export const Sidebar = ({ data }: SidebarProps) => (
-    <div className="flex flex-col gap-8">
+    <div className="flex flex-col gap-4">
         {/* Avatar is part of personalInfo — not a separate section */}
         <Avatar
             src={data.personalInfo?.avatar}

@@ -40,8 +40,42 @@ const DEFAULT_VALUES: ResumeContent = {
         "Optimized bundle sizes by 35% through dynamic imports and code splitting.",
       ],
     },
+    {
+      company: "InnovateTech Solutions",
+      position: "Lead Frontend Engineer",
+      startDate: "Jan 2022",
+      endDate: "",
+      current: true,
+      description: "Spearheaded the migration of a legacy dashboard to Next.js App Router, increasing page load speed by 42% and developer velocity by 30%. Led a team of 4 junior developers and established code styling standards.",
+      bulletPoints: [
+        "Designed and maintained a centralized design system using Tailwind and Radix UI.",
+        "Implemented real-time data sync using WebSockets for live status updates.",
+        "Optimized bundle sizes by 35% through dynamic imports and code splitting.",
+      ],
+    },
+    {
+      company: "InnovateTech Solutions",
+      position: "Lead Frontend Engineer",
+      startDate: "Jan 2022",
+      endDate: "",
+      current: true,
+      description: "Spearheaded the migration of a legacy dashboard to Next.js App Router, increasing page load speed by 42% and developer velocity by 30%. Led a team of 4 junior developers and established code styling standards.",
+      bulletPoints: [
+        "Designed and maintained a centralized design system using Tailwind and Radix UI.",
+        "Implemented real-time data sync using WebSockets for live status updates.",
+        "Optimized bundle sizes by 35% through dynamic imports and code splitting.",
+      ],
+    },
   ],
   education: [
+    {
+      school: "University of California, Berkeley",
+      degree: "Bachelor of Science",
+      fieldOfStudy: "Computer Science",
+      startDate: "Sep 2016",
+      endDate: "Jun 2020",
+      description: "Graduated with Honors. Specialized in Human-Computer Interaction and Software Engineering.",
+    },
     {
       school: "University of California, Berkeley",
       degree: "Bachelor of Science",
@@ -65,6 +99,50 @@ const DEFAULT_VALUES: ResumeContent = {
     { name: "AWS Certified Cloud Practitioner", issuer: "Amazon Web Services", date: "Feb 2023" },
   ],
   projects: [
+    {
+      name: "CVPilot Editor",
+      description: "Built the frontend of an interactive split-pane resume builder using React Hook Form.",
+      link: "https://github.com/cvpilot/editor",
+    },
+    {
+      name: "CVPilot Editor",
+      description: "Built the frontend of an interactive split-pane resume builder using React Hook Form.",
+      link: "https://github.com/cvpilot/editor",
+    },
+
+    {
+      name: "CVPilot Editor",
+      description: "Built the frontend of an interactive split-pane resume builder using React Hook Form.",
+      link: "https://github.com/cvpilot/editor",
+    },
+    {
+      name: "CVPilot Editor",
+      description: "Built the frontend of an interactive split-pane resume builder using React Hook Form.",
+      link: "https://github.com/cvpilot/editor",
+    },
+
+    {
+      name: "CVPilot Editor",
+      description: "Built the frontend of an interactive split-pane resume builder using React Hook Form.",
+      link: "https://github.com/cvpilot/editor",
+    },
+
+
+    {
+      name: "CVPilot Editor",
+      description: "Built the frontend of an interactive split-pane resume builder using React Hook Form.",
+      link: "https://github.com/cvpilot/editor",
+    },
+    {
+      name: "CVPilot Editor",
+      description: "Built the frontend of an interactive split-pane resume builder using React Hook Form.",
+      link: "https://github.com/cvpilot/editor",
+    },
+    {
+      name: "CVPilot Editor",
+      description: "Built the frontend of an interactive split-pane resume builder using React Hook Form.",
+      link: "https://github.com/cvpilot/editor",
+    },
     {
       name: "CVPilot Editor",
       description: "Built the frontend of an interactive split-pane resume builder using React Hook Form.",
