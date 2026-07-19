@@ -1,4 +1,7 @@
+"use client";
+
 import { ResumeContent } from "@/schemas/resume.schema";
+import { HtmlContent } from "@/components/resume-templates/HtmlContent";
 
 type ProjectEntry = NonNullable<ResumeContent["projects"]>[number];
 
@@ -26,9 +29,10 @@ export const ProjectItem = ({ project }: ProjectItemProps) => (
         </div>
 
         {project.description && (
-            <p className="mt-1 text-[9pt] leading-snug text-neutral-600">
-                {project.description}
-            </p>
+            <HtmlContent
+                html={project.description}
+                className="mt-1 text-[9pt] leading-snug text-neutral-600 [&_p]:my-0.5 [&_strong]:font-semibold [&_em]:italic [&_ul]:list-disc [&_ul]:pl-3 [&_li]:my-0.5"
+            />
         )}
     </div>
 );

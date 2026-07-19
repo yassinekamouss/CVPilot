@@ -1,5 +1,8 @@
+"use client";
+
 import { ResumeContent } from "@/schemas/resume.schema";
 import { ContactList } from "./ContactList";
+import { HtmlContent } from "@/components/resume-templates/HtmlContent";
 
 interface HeaderProps {
     personalInfo?: ResumeContent["personalInfo"];
@@ -24,9 +27,10 @@ export const Header = ({ personalInfo, summary }: HeaderProps) => {
             )}
 
             {summary && (
-                <p className="mt-1.5 text-[9pt] leading-snug text-neutral-600">
-                    {summary}
-                </p>
+                <HtmlContent
+                    html={summary}
+                    className="mt-1.5 text-[9pt] leading-snug text-neutral-600 [&_p]:my-0 [&_strong]:font-semibold [&_em]:italic"
+                />
             )}
 
             <ContactList personalInfo={personalInfo} />

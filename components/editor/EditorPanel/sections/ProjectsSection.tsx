@@ -3,13 +3,13 @@
 import { Controller, Control, useFieldArray } from "react-hook-form";
 import { ResumeContent } from "@/schemas/resume.schema";
 import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
-import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
-import { Plus, Trash2, GripVertical } from "lucide-react";
+import { Plus } from "lucide-react";
 import { useTranslations } from "next-intl";
-import { SectionTitle } from "./SectionTitle";
+import { CollapsibleCard } from "./CollapsibleCard";
+import { RichTextEditor } from "./RichTextEditor";
 import { AIEnhanceButton } from "../AIEnhanceButton";
+import { FormField } from "../FormField";
 
 interface ProjectsSectionProps {
   control: Control<ResumeContent>;
@@ -23,88 +23,119 @@ export function ProjectsSection({ control }: ProjectsSectionProps) {
   });
 
   return (
-    <section id="section-projects" className="animate-fadeIn">
-      <SectionTitle>{t("projects")}</SectionTitle>
-      <div className="space-y-4">
-        {fields.map((field, index) => (
-          <div key={field.id} className="rounded-2xl border border-[#E2E8F0] bg-white p-6 space-y-4 shadow-sm transition-shadow hover:shadow-md">
-            <div className="flex items-center justify-between">
-              <div className="flex items-center gap-2 text-[#94A3B8]">
-                <GripVertical size={14} />
-                <span className="text-xs font-semibold text-[#64748B]">
-                  {t("project", { number: index + 1 })}
-                </span>
-              </div>
-              <Button
-                type="button"
-                variant="destructive"
-                size="icon"
-                onClick={() => remove(index)}
-                className="h-7 w-7 rounded-lg"
-              >
-                <Trash2 size={13} />
-              </Button>
-            </div>
+    <div className="space-y-2.5">
+      {fields.map((field, index) => (
+        <ProjectEntry
+          key={field.id}
+          index={index}
+          control={control}
+          onRemove={() => remove(index)}
+          defaultOpen={!field.name}
+        />
+      ))}
 
-            <div className="grid grid-cols-2 gap-4">
-              <div className="col-span-2">
-                <Label htmlFor={`projects.${index}.name`} className="mb-1.5 block font-medium text-[#0B132B]">
-                  {t("projectName")}
-                </Label>
-                <Controller
-                  control={control}
-                  name={`projects.${index}.name`}
-                  render={({ field: f }) => (
-                    <Input
-                      {...f}
-                      id={`projects.${index}.name`}
-                      value={f.value ?? ""}
-                      placeholder="AI SaaS Platform"
-                      className="h-10 border-[#E2E8F0] focus:ring-2 focus:ring-[#2563EB]"
-                    />
-                  )}
-                />
+      <Button
+        type="button"
+        variant="outline"
+        size="sm"
+        onClick={() => append({ name: "", description: "", link: "" })}
+        className="w-full h-8 rounded-lg border-dashed border-[#E2E8F0] text-[#64748B] hover:border-[#2563EB] hover:text-[#2563EB] hover:bg-blue-50/50 transition-all font-medium text-xs"
+      >
+        <Plus size={12} className="mr-1.5" />
+        {t("addProject")}
+      </Button>
+    </div>
+  );
+}
+
+function ProjectEntry({
+  index,
+  control,
+  onRemove,
+  defaultOpen,
+}: {
+  index: number;
+  control: Control<ResumeContent>;
+  onRemove: () => void;
+  defaultOpen: boolean;
+}) {
+  const t = useTranslations("Builder");
+
+  return (
+    <Controller
+      control={control}
+      name={`projects.${index}`}
+      render={({ field: entryField }) => {
+        const entry = entryField.value as any;
+        const headline = entry?.name || "";
+        let subline = "";
+        try {
+          subline = entry?.link ? new URL(entry.link).hostname : "";
+        } catch {}
+
+        return (
+          <CollapsibleCard
+            headline={headline}
+            subline={subline}
+            index={index + 1}
+            onRemove={onRemove}
+            removeLabel={t("delete")}
+            defaultOpen={defaultOpen}
+          >
+            <div className="space-y-3">
+              <div className="grid grid-cols-2 gap-3">
+                <FormField id={`proj-${index}-name`} label={t("projectName")}>
+                  <Controller
+                    control={control}
+                    name={`projects.${index}.name`}
+                    render={({ field: f }) => (
+                      <Input
+                        {...f}
+                        id={`proj-${index}-name`}
+                        value={f.value ?? ""}
+                        placeholder="AI SaaS Platform"
+                        className="h-8 text-sm border-[#E2E8F0] rounded-lg focus:ring-1 focus:ring-[#2563EB]/50 focus:border-[#2563EB] transition-all placeholder:text-[#CBD5E1]"
+                      />
+                    )}
+                  />
+                </FormField>
+                <FormField id={`proj-${index}-link`} label={t("projectLink")}>
+                  <Controller
+                    control={control}
+                    name={`projects.${index}.link`}
+                    render={({ field: f }) => (
+                      <Input
+                        {...f}
+                        id={`proj-${index}-link`}
+                        value={f.value ?? ""}
+                        placeholder="https://github.com/..."
+                        className="h-8 text-sm border-[#E2E8F0] rounded-lg focus:ring-1 focus:ring-[#2563EB]/50 focus:border-[#2563EB] transition-all placeholder:text-[#CBD5E1]"
+                      />
+                    )}
+                  />
+                </FormField>
               </div>
 
-              <div className="col-span-2">
-                <Label htmlFor={`projects.${index}.link`} className="mb-1.5 block font-medium text-[#0B132B]">
-                  {t("projectLink")}
-                </Label>
-                <Controller
-                  control={control}
-                  name={`projects.${index}.link`}
-                  render={({ field: f }) => (
-                    <Input
-                      {...f}
-                      id={`projects.${index}.link`}
-                      value={f.value ?? ""}
-                      placeholder="https://github.com/username/project"
-                      className="h-10 border-[#E2E8F0] focus:ring-2 focus:ring-[#2563EB]"
-                    />
-                  )}
-                />
-              </div>
-
-              <div className="col-span-2 relative group">
-                <Label htmlFor={`projects.${index}.description`} className="mb-1.5 block font-medium text-[#0B132B]">
+              <div className="space-y-1.5">
+                <span className="text-[11px] font-semibold text-[#64748B] uppercase tracking-wide block">
                   {t("description")}
-                </Label>
+                </span>
                 <Controller
                   control={control}
                   name={`projects.${index}.description`}
-                  render={({ field: f }) => (
+                  render={({ field }) => (
                     <>
-                      <Textarea
-                        {...f}
-                        id={`projects.${index}.description`}
-                        value={f.value ?? ""}
-                        placeholder="Briefly describe the project, tech stack, and your role..."
-                        className="min-h-[80px] border-[#E2E8F0] focus:ring-2 focus:ring-[#2563EB] text-sm text-[#0B132B] pb-10"
+                      <RichTextEditor
+                        id={`proj-rte-${index}`}
+                        value={field.value ?? ""}
+                        onChange={field.onChange}
+                        placeholder="Briefly describe the project, tech stack, and your role…"
+                        minHeight="80px"
                       />
-                      <div className="absolute bottom-2 right-2 opacity-0 group-hover:opacity-100 group-focus-within:opacity-100 focus-within:opacity-100 transition-opacity duration-200">
+                      <div className="flex justify-end mt-1.5">
                         <AIEnhanceButton
-                          value={f.value ?? ""}
-                          onChange={f.onChange}
+                          value={field.value ?? ""}
+                          onChange={field.onChange}
                           fieldName="projects"
                         />
                       </div>
@@ -113,22 +144,9 @@ export function ProjectsSection({ control }: ProjectsSectionProps) {
                 />
               </div>
             </div>
-          </div>
-        ))}
-
-        <Button
-          type="button"
-          variant="outline"
-          size="sm"
-          className="w-full border-dashed border-[#E2E8F0] text-[#0B132B] hover:border-[#2563EB] hover:text-[#2563EB] duration-200"
-          onClick={() => append({ name: "", description: "", link: "" })}
-        >
-          <Plus size={14} className="mr-1" />
-          {t("addProject")}
-        </Button>
-      </div>
-    </section>
+          </CollapsibleCard>
+        );
+      }}
+    />
   );
 }
-
-

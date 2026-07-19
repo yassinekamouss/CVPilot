@@ -1,221 +1,269 @@
 "use client";
 
+import React, { useCallback } from "react";
 import { Control } from "react-hook-form";
+import { motion, AnimatePresence } from "framer-motion";
+import { ChevronLeft, ChevronRight } from "lucide-react";
 import { ResumeContent } from "@/schemas/resume.schema";
 import { PersonalInfoSection } from "./sections/PersonalInfoSection";
 import { SummarySection } from "./sections/SummarySection";
 import { ExperienceSection } from "./sections/ExperienceSection";
 import { EducationSection } from "./sections/EducationSection";
 import { SkillsSection } from "./sections/SkillsSection";
-import { LanguagesSection } from "./sections/LanguagesSection";
-import { CertificationsSection } from "./sections/CertificationsSection";
-import { ProjectsSection } from "./sections/ProjectsSection";
-import { InterestsSection } from "./sections/InterestsSection";
-import { useTranslations } from "next-intl";
-import {
-  User,
-  AlignLeft,
-  Briefcase,
-  GraduationCap,
-  Cpu,
-  Globe,
-  Award,
-  FolderGit,
-  Heart,
-} from "lucide-react";
-import {
-  useResumeInteraction,
-  type SectionId,
-} from "@/components/editor/interaction/ResumeInteractionContext";
+import { FinalizeStep } from "./sections/FinalizeStep";
+import { HorizontalStepper, type Step } from "./HorizontalStepper";
+import { useResumeInteraction } from "@/components/editor/interaction/ResumeInteractionContext";
 
 interface EditorPanelProps {
   control: Control<ResumeContent>;
-  /** Live form data used to compute per-section completion dots */
   liveData: ResumeContent;
+  currentStep: number;
+  onStepChange: (step: number) => void;
 }
 
-interface SectionConfig {
-  id: SectionId;
-  labelKey: string;
-  icon: React.ElementType;
-  hasSomeContent: (data: ResumeContent) => boolean;
-}
+// ─── Step config ──────────────────────────────────────────────────────────────
 
-const SECTIONS: SectionConfig[] = [
-  {
-    id: "personalInfo",
-    labelKey: "personalInfo",
-    icon: User,
-    hasSomeContent: (d) =>
-      !!(d.personalInfo?.firstName || d.personalInfo?.email || d.personalInfo?.jobTitle),
-  },
-  {
-    id: "summary",
-    labelKey: "summary",
-    icon: AlignLeft,
-    hasSomeContent: (d) => !!(d.summary && d.summary.trim().length > 0),
-  },
-  {
-    id: "experience",
-    labelKey: "experience",
-    icon: Briefcase,
-    hasSomeContent: (d) => !!(d.experience && d.experience.length > 0),
-  },
-  {
-    id: "education",
-    labelKey: "education",
-    icon: GraduationCap,
-    hasSomeContent: (d) => !!(d.education && d.education.length > 0),
-  },
-  {
-    id: "skills",
-    labelKey: "skills",
-    icon: Cpu,
-    hasSomeContent: (d) => !!(d.skills && d.skills.length > 0),
-  },
-  {
-    id: "languages",
-    labelKey: "languages",
-    icon: Globe,
-    hasSomeContent: (d) => !!(d.languages && d.languages.length > 0),
-  },
-  {
-    id: "certifications",
-    labelKey: "certifications",
-    icon: Award,
-    hasSomeContent: (d) => !!(d.certifications && d.certifications.length > 0),
-  },
-  {
-    id: "projects",
-    labelKey: "projects",
-    icon: FolderGit,
-    hasSomeContent: (d) => !!(d.projects && d.projects.length > 0),
-  },
-  {
-    id: "interests",
-    labelKey: "interests",
-    icon: Heart,
-    hasSomeContent: (d) => !!(d.interests && d.interests.length > 0),
-  },
+const STEPS: Step[] = [
+  { id: "personalInfo", label: "Personal Info",  shortLabel: "Info" },
+  { id: "summary",      label: "Summary",        shortLabel: "Summary" },
+  { id: "experience",   label: "Experience",     shortLabel: "Experience" },
+  { id: "education",    label: "Education",      shortLabel: "Education" },
+  { id: "skills",       label: "Skills",         shortLabel: "Skills" },
+  { id: "finalize",     label: "Finalize",       shortLabel: "Finalize" },
 ];
+
+/** Returns 0–100 resume completeness score */
+function computeCompleteness(data: ResumeContent): number {
+  const checks = [
+    !!(data.personalInfo?.firstName && data.personalInfo?.email),
+    !!(data.summary && data.summary.trim().length > 30),
+    !!(data.experience && data.experience.length > 0),
+    !!(data.education && data.education.length > 0),
+    !!(data.skills && data.skills.length >= 3),
+    !!(
+      (data.languages && data.languages.length > 0) ||
+      (data.certifications && data.certifications.length > 0) ||
+      (data.projects && data.projects.length > 0)
+    ),
+  ];
+  return Math.round((checks.filter(Boolean).length / checks.length) * 100);
+}
+
+/** Returns a map of step.id → whether that step has some content */
+function buildCompletionMap(data: ResumeContent): Record<string, boolean> {
+  return {
+    personalInfo: !!(data.personalInfo?.firstName || data.personalInfo?.email),
+    summary: !!(data.summary && data.summary.trim().length > 10),
+    experience: !!(data.experience && data.experience.length > 0),
+    education: !!(data.education && data.education.length > 0),
+    skills: !!(data.skills && data.skills.length > 0),
+    finalize:
+      !!(data.languages && data.languages.length > 0) ||
+      !!(data.certifications && data.certifications.length > 0) ||
+      !!(data.projects && data.projects.length > 0) ||
+      !!(data.interests && data.interests.length > 0),
+  };
+}
 
 /**
  * EditorPanel
  *
- * Responsibilities:
- * - Render the dark sidebar with icon navigation.
- * - Show a completion dot on each icon when the section has content.
- * - Render the active section form in the main scroll area.
- * - Read activeSection and focusSection from ResumeInteractionContext
- *   (no more prop drilling from EditorShell).
- */
-export function EditorPanel({ control, liveData }: EditorPanelProps) {
-  const t = useTranslations("Builder");
-  // Read from the central interaction context — no props needed
-  const { activeSection, focusSection } = useResumeInteraction();
-
-  return (
-    <div className="flex flex-1 overflow-hidden h-full bg-[#F8FAFC]">
-      {/* ─── Sidebar icon navigation ─── */}
-      <aside className="w-[64px] sm:w-[72px] bg-[#0B132B] flex flex-col items-center py-4 gap-1.5 flex-shrink-0 z-10 border-r border-[#1D2D44]">
-        {SECTIONS.map((sec) => {
-          const isActive = activeSection === sec.id;
-          const isDone = sec.hasSomeContent(liveData);
-
-          return (
-            <SidebarButton
-              key={sec.id}
-              isActive={isActive}
-              isDone={isDone}
-              label={t(sec.labelKey)}
-              icon={sec.icon}
-              onClick={() => focusSection(sec.id)}
-            />
-          );
-        })}
-      </aside>
-
-      {/* ─── Active section form ─── */}
-      <main className="flex-1 overflow-y-auto px-4 py-6 md:px-6 md:py-8 scroll-smooth pb-24">
-        <div className="animate-fadeInSlide" key={activeSection}>
-          {activeSection === "personalInfo" && <PersonalInfoSection control={control} />}
-          {activeSection === "summary" && <SummarySection control={control} />}
-          {activeSection === "experience" && <ExperienceSection control={control} />}
-          {activeSection === "education" && <EducationSection control={control} />}
-          {activeSection === "skills" && <SkillsSection control={control} />}
-          {activeSection === "languages" && <LanguagesSection control={control} />}
-          {activeSection === "certifications" && <CertificationsSection control={control} />}
-          {activeSection === "projects" && <ProjectsSection control={control} />}
-          {activeSection === "interests" && <InterestsSection control={control} />}
-        </div>
-      </main>
-    </div>
-  );
-}
-
-// ─── Sub-components ──────────────────────────────────────────────────────────
-
-interface SidebarButtonProps {
-  isActive: boolean;
-  isDone: boolean;
-  label: string;
-  icon: React.ElementType;
-  onClick: () => void;
-}
-
-/**
- * SidebarButton
+ * Left-pane workspace panel.
+ * Architecture: linear step-based form driven by `currentStep` (controlled from EditorShell).
+ * - `HorizontalStepper` sits at the top for navigation.
+ * - The active step's form is rendered in the scrollable area below.
+ * - Prev/Next buttons at the bottom.
  *
- * A single icon button in the navigation sidebar.
- * - Active state: left blue accent bar + blue background.
- * - Done state: small green completion dot in the top-right corner.
- * - Tooltip on hover (desktop).
+ * SOLID:
+ * - Single Responsibility: only orchestrates step rendering and navigation.
+ * - Open/Closed: new steps added by extending STEPS array + switch case.
+ * - Dependency Inversion: depends on abstract Step config, not concrete components.
  */
-function SidebarButton({ isActive, isDone, label, icon: Icon, onClick }: SidebarButtonProps) {
+export function EditorPanel({
+  control,
+  liveData,
+  currentStep,
+  onStepChange,
+}: EditorPanelProps) {
+  const completionMap = buildCompletionMap(liveData);
+  const completenessScore = computeCompleteness(liveData);
+
+  const { activeSection, focusSection } = useResumeInteraction();
+  const isUserNavigatingRef = React.useRef(false);
+
+  // Sync right-pane clicks -> left-pane steps
+  React.useEffect(() => {
+    if (isUserNavigatingRef.current) {
+      isUserNavigatingRef.current = false;
+      return;
+    }
+    const sectionToStep: Record<string, number> = {
+      personalInfo: 0,
+      summary: 1,
+      experience: 2,
+      education: 3,
+      skills: 4,
+      languages: 5,
+      certifications: 5,
+      projects: 5,
+      interests: 5,
+    };
+    const targetStep = sectionToStep[activeSection];
+    if (targetStep !== undefined && targetStep !== currentStep) {
+      onStepChange(targetStep);
+    }
+  }, [activeSection]); // only trigger when activeSection changes from the right pane
+
+  // Sync left-pane steps -> right-pane active section
+  React.useEffect(() => {
+    const stepToSection: Record<number, any> = {
+      0: "personalInfo",
+      1: "summary",
+      2: "experience",
+      3: "education",
+      4: "skills",
+    };
+    const targetSection = stepToSection[currentStep];
+    if (targetSection && targetSection !== activeSection) {
+      focusSection(targetSection);
+    }
+  }, [currentStep, focusSection]); // remove activeSection to avoid reverse-trigger loops
+
+  const handleStepChange = useCallback((step: number) => {
+    isUserNavigatingRef.current = true;
+    onStepChange(step);
+  }, [onStepChange]);
+
+  const goNext = useCallback(() => {
+    handleStepChange(Math.min(currentStep + 1, STEPS.length - 1));
+  }, [currentStep, handleStepChange]);
+
+  const goPrev = useCallback(() => {
+    handleStepChange(Math.max(currentStep - 1, 0));
+  }, [currentStep, handleStepChange]);
+
   return (
-    <div className="relative w-full flex justify-center">
-      {/* Left accent bar (active indicator) */}
-      <div
-        className={[
-          "absolute left-0 top-1/2 -translate-y-1/2 w-[3px] rounded-r-full transition-all duration-300",
-          isActive ? "h-7 bg-[#2563EB]" : "h-0 bg-transparent",
-        ].join(" ")}
+    <div className="flex flex-col h-full overflow-hidden bg-neutral-50">
+      {/* ─── Stepper (sticky top) ─── */}
+      <HorizontalStepper
+        steps={STEPS}
+        currentStep={currentStep}
+        completionMap={completionMap}
+        onStepChange={handleStepChange}
+        completenessScore={completenessScore}
       />
 
-      <button
-        type="button"
-        onClick={onClick}
-        aria-label={label}
-        aria-pressed={isActive}
-        className={[
-          "w-[52px] h-[52px] sm:w-[56px] sm:h-[56px] rounded-xl flex items-center justify-center",
-          "cursor-pointer transition-all duration-200 relative outline-none group",
-          "focus-visible:ring-2 focus-visible:ring-[#2563EB] focus-visible:ring-offset-2 focus-visible:ring-offset-[#0B132B]",
-          isActive
-            ? "bg-[#2563EB]/15 text-white"
-            : "text-[#94A3B8] hover:text-white hover:bg-[#1D2D44]/60",
-        ].join(" ")}
-      >
-        <Icon
-          size={18}
-          className={["transition-transform duration-200", isActive ? "scale-110" : "group-hover:scale-105"].join(" ")}
-        />
+      {/* ─── Step form area (scrollable) ─── */}
+      <div className="flex-1 overflow-y-auto overflow-x-hidden">
+        <AnimatePresence mode="wait" initial={false}>
+          <motion.div
+            key={currentStep}
+            initial={{ opacity: 0, x: 12 }}
+            animate={{ opacity: 1, x: 0 }}
+            exit={{ opacity: 0, x: -12 }}
+            transition={{ duration: 0.18, ease: "easeOut" }}
+            className="p-5 space-y-4"
+          >
+            {/* Step heading */}
+            <div className="pb-1 border-b border-[#F1F5F9]">
+              <h2 className="text-[13px] font-semibold text-[#0B132B]">
+                {STEPS[currentStep]?.label}
+              </h2>
+              <p className="text-[11px] text-[#94A3B8] mt-0.5">
+                <StepDescription stepId={STEPS[currentStep]?.id ?? ""} />
+              </p>
+            </div>
 
-        {/* Completion dot */}
-        {isDone && (
-          <span
-            className={[
-              "absolute top-2 right-2 h-[7px] w-[7px] rounded-full border border-[#0B132B]",
-              isActive ? "bg-[#10B981] border-[#2563EB]/30" : "bg-[#10B981]",
-            ].join(" ")}
-          />
-        )}
+            {/* Section form */}
+            <StepContent
+              stepId={STEPS[currentStep]?.id ?? ""}
+              control={control}
+              liveData={liveData}
+            />
+          </motion.div>
+        </AnimatePresence>
+      </div>
 
-        {/* Tooltip */}
-        <span className="absolute left-[calc(100%+10px)] bg-[#0B132B] text-white text-[10px] font-semibold px-2 py-1 rounded-lg shadow-lg border border-[#1D2D44] whitespace-nowrap opacity-0 pointer-events-none group-hover:opacity-100 transition-opacity duration-150 hidden sm:block z-50">
-          {label}
+      {/* ─── Prev / Next navigation ─── */}
+      <div className="flex-shrink-0 flex items-center justify-between px-5 py-3 border-t border-[#E2E8F0] bg-white">
+        <button
+          type="button"
+          onClick={goPrev}
+          disabled={currentStep === 0}
+          className={[
+            "flex items-center gap-1.5 text-[12px] font-semibold rounded-lg px-3 py-1.5 transition-all cursor-pointer",
+            currentStep === 0
+              ? "text-[#CBD5E1] cursor-not-allowed"
+              : "text-[#64748B] hover:text-[#0B132B] hover:bg-[#F8FAFC]",
+          ].join(" ")}
+        >
+          <ChevronLeft size={14} strokeWidth={2.5} />
+          Previous
+        </button>
+
+        {/* Step count */}
+        <span className="text-[10px] font-medium text-[#94A3B8] select-none">
+          {currentStep + 1} / {STEPS.length}
         </span>
-      </button>
+
+        {currentStep < STEPS.length - 1 ? (
+          <button
+            type="button"
+            onClick={goNext}
+            className="flex items-center gap-1.5 text-[12px] font-semibold rounded-lg px-3 py-1.5 bg-[#2563EB] hover:bg-[#1d4ed8] text-white transition-all cursor-pointer"
+          >
+            Next
+            <ChevronRight size={14} strokeWidth={2.5} />
+          </button>
+        ) : (
+          <div className="w-20 flex items-center justify-end">
+            <span className="text-[11px] font-semibold text-[#10B981]">✓ All done</span>
+          </div>
+        )}
+      </div>
     </div>
   );
+}
+
+// ─── Step content router ──────────────────────────────────────────────────────
+
+function StepContent({
+  stepId,
+  control,
+  liveData,
+}: {
+  stepId: string;
+  control: Control<ResumeContent>;
+  liveData: ResumeContent;
+}) {
+  switch (stepId) {
+    case "personalInfo":
+      return <PersonalInfoSection control={control} />;
+    case "summary":
+      return <SummarySection control={control} />;
+    case "experience":
+      return <ExperienceSection control={control} />;
+    case "education":
+      return <EducationSection control={control} />;
+    case "skills":
+      return <SkillsSection control={control} />;
+    case "finalize":
+      return <FinalizeStep control={control} liveData={liveData} />;
+    default:
+      return null;
+  }
+}
+
+// ─── Step descriptions ────────────────────────────────────────────────────────
+
+function StepDescription({ stepId }: { stepId: string }) {
+  const descriptions: Record<string, string> = {
+    personalInfo: "Tell employers who you are and how to reach you.",
+    summary: "A 2–4 sentence overview of your professional background.",
+    experience: "Highlight your past roles, responsibilities, and impact.",
+    education: "List your academic background and degrees.",
+    skills: "Showcase your technical and soft skills.",
+    finalize: "Add optional sections and review your resume.",
+  };
+  return <>{descriptions[stepId] ?? ""}</>;
 }

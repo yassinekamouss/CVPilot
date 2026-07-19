@@ -44,6 +44,7 @@ export function PreviewScaler({
 
   /** The scrollable workspace div — passed to useScrollSync */
   const scrollContainerRef = useRef<HTMLDivElement>(null);
+  const prevPagesRef = useRef<number>(1);
 
   const [scale, setScale] = useState(1);
   const [naturalHeight, setNaturalHeight] = useState(A4_HEIGHT_PX);
@@ -57,7 +58,11 @@ export function PreviewScaler({
     const pages = Math.max(1, Math.ceil(h / A4_HEIGHT_PX));
     setNaturalHeight(h);
     setTotalPages(pages);
-    onTotalPages(pages);
+    
+    if (prevPagesRef.current !== pages) {
+      prevPagesRef.current = pages;
+      onTotalPages(pages);
+    }
   }, [onTotalPages]);
 
   const updateScale = useCallback(() => {

@@ -3,14 +3,14 @@
 import { Controller, Control, useFieldArray } from "react-hook-form";
 import { ResumeContent } from "@/schemas/resume.schema";
 import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
-import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
-import { Plus, Trash2, GripVertical } from "lucide-react";
+import { Plus, Trash2 } from "lucide-react";
 import { useTranslations } from "next-intl";
-import { SectionTitle } from "./SectionTitle";
+import { CollapsibleCard } from "./CollapsibleCard";
 import { AIEnhanceButton } from "../AIEnhanceButton";
+import { RichTextEditor } from "./RichTextEditor";
+import { FormField } from "../FormField";
 
 interface ExperienceSectionProps {
   control: Control<ResumeContent>;
@@ -24,39 +24,38 @@ export function ExperienceSection({ control }: ExperienceSectionProps) {
   });
 
   return (
-    <section id="section-experience" className="animate-fadeIn">
-      <SectionTitle>{t("experience")}</SectionTitle>
-      <div className="space-y-4">
-        {fields.map((field, index) => (
-          <ExperienceEntry
-            key={field.id}
-            index={index}
-            control={control}
-            onRemove={() => remove(index)}
-          />
-        ))}
-        <Button
-          type="button"
-          variant="outline"
-          size="sm"
-          onClick={() =>
-            append({
-              company: "",
-              position: "",
-              startDate: "",
-              endDate: "",
-              current: false,
-              description: "",
-              bulletPoints: [],
-            })
-          }
-          className="w-full border-dashed border-[#E2E8F0] text-[#0B132B] hover:border-[#2563EB] hover:text-[#2563EB] duration-200"
-        >
-          <Plus size={14} className="mr-1" />
-          {t("addExperience")}
-        </Button>
-      </div>
-    </section>
+    <div className="space-y-2.5">
+      {fields.map((field, index) => (
+        <ExperienceEntry
+          key={field.id}
+          index={index}
+          control={control}
+          onRemove={() => remove(index)}
+          defaultOpen={!field.company && !field.position}
+        />
+      ))}
+
+      <Button
+        type="button"
+        variant="outline"
+        size="sm"
+        onClick={() =>
+          append({
+            company: "",
+            position: "",
+            startDate: "",
+            endDate: "",
+            current: false,
+            description: "",
+            bulletPoints: [],
+          })
+        }
+        className="w-full h-8 rounded-lg border-dashed border-[#E2E8F0] text-[#64748B] hover:border-[#2563EB] hover:text-[#2563EB] hover:bg-blue-50/50 transition-all font-medium text-xs"
+      >
+        <Plus size={12} className="mr-1.5" />
+        {t("addExperience")}
+      </Button>
+    </div>
   );
 }
 
@@ -64,179 +63,208 @@ function ExperienceEntry({
   index,
   control,
   onRemove,
+  defaultOpen,
 }: {
   index: number;
   control: Control<ResumeContent>;
   onRemove: () => void;
+  defaultOpen: boolean;
 }) {
   const t = useTranslations("Builder");
   const { fields: bulletFields, append: appendBullet, remove: removeBullet } =
     useFieldArray({ control, name: `experience.${index}.bulletPoints` as any });
 
   return (
-    <div className="rounded-2xl border border-[#E2E8F0] bg-white p-6 space-y-4 shadow-sm transition-shadow hover:shadow-md">
-      <div className="flex items-center justify-between mb-1">
-        <div className="flex items-center gap-2 text-[#94A3B8]">
-          <GripVertical size={14} />
-          <span className="text-xs font-semibold text-[#64748B]">
-            {t("entry", { number: index + 1 })}
-          </span>
-        </div>
-        <Button
-          type="button"
-          variant="destructive"
-          size="icon"
-          onClick={onRemove}
-          className="h-7 w-7 rounded-lg"
-        >
-          <Trash2 size={13} />
-        </Button>
-      </div>
+    <Controller
+      control={control}
+      name={`experience.${index}`}
+      render={({ field: entryField }) => {
+        const entry = entryField.value as any;
+        const headline = entry?.company || "";
+        const subline = entry?.position || "";
+        const startDate = entry?.startDate || "";
+        const endDate = entry?.current ? t("present") : (entry?.endDate || "");
+        const dateRange = startDate ? `${startDate}${endDate ? ` — ${endDate}` : ""}` : "";
 
-      <div className="grid grid-cols-2 gap-4">
-        <ControlledInput control={control} name={`experience.${index}.position`} label={t("position")} placeholder="Product Designer" />
-        <ControlledInput control={control} name={`experience.${index}.company`} label={t("company")} placeholder="Acme Corp" />
-        <ControlledInput control={control} name={`experience.${index}.startDate`} label={t("startDate")} placeholder="Jan 2022" />
-
-        <Controller
-          control={control}
-          name={`experience.${index}.current`}
-          render={({ field }) => (
-            <div className="flex flex-col gap-1.5">
-              <Label className="opacity-0 select-none hidden md:block">Current</Label>
-              <div className="flex items-center h-10">
-                <Checkbox
-                  id={`exp-current-${index}`}
-                  label={t("currentlyWorking")}
-                  checked={field.value ?? false}
-                  onChange={(e) => field.onChange(e.target.checked)}
+        return (
+          <CollapsibleCard
+            headline={headline}
+            subline={subline}
+            dateRange={dateRange}
+            index={index + 1}
+            onRemove={onRemove}
+            removeLabel={t("delete")}
+            defaultOpen={defaultOpen}
+          >
+            {/* Fields grid */}
+            <div className="grid grid-cols-2 gap-3">
+              <FormField id={`exp-${index}-position`} label={t("position")}>
+                <Controller
+                  control={control}
+                  name={`experience.${index}.position`}
+                  render={({ field: f }) => (
+                    <Input
+                      {...f}
+                      id={`exp-${index}-position`}
+                      value={f.value ?? ""}
+                      placeholder="Product Designer"
+                      className="h-8 text-sm border-[#E2E8F0] rounded-lg focus:ring-1 focus:ring-[#2563EB]/50 focus:border-[#2563EB] transition-all placeholder:text-[#CBD5E1]"
+                    />
+                  )}
                 />
-              </div>
-            </div>
-          )}
-        />
-
-        <Controller
-          control={control}
-          name={`experience.${index}.current`}
-          render={({ field: currentField }) =>
-            currentField.value ? (
-              <></>
-            ) : (
-              <ControlledInput
-                control={control}
-                name={`experience.${index}.endDate`}
-                label={t("endDate")}
-                placeholder="Mar 2024"
-              />
-            )
-          }
-        />
-      </div>
-
-      <div className="relative group">
-        <Label htmlFor={`exp-desc-${index}`} className="mb-1.5 block font-medium text-[#0B132B]">
-          {t("description")}
-        </Label>
-        <Controller
-          control={control}
-          name={`experience.${index}.description`}
-          render={({ field }) => (
-            <>
-              <Textarea
-                {...field}
-                id={`exp-desc-${index}`}
-                value={field.value ?? ""}
-                placeholder="Briefly describe your role and responsibilities..."
-                className="min-h-[90px] border-[#E2E8F0] focus:ring-2 focus:ring-[#2563EB] text-sm text-[#0B132B] pb-10"
-              />
-              <div className="absolute bottom-2 right-2 opacity-0 group-hover:opacity-100 group-focus-within:opacity-100 focus-within:opacity-100 transition-opacity duration-200">
-                <AIEnhanceButton
-                  value={field.value ?? ""}
-                  onChange={field.onChange}
-                  fieldName="experience"
+              </FormField>
+              <FormField id={`exp-${index}-company`} label={t("company")}>
+                <Controller
+                  control={control}
+                  name={`experience.${index}.company`}
+                  render={({ field: f }) => (
+                    <Input
+                      {...f}
+                      id={`exp-${index}-company`}
+                      value={f.value ?? ""}
+                      placeholder="Acme Corp"
+                      className="h-8 text-sm border-[#E2E8F0] rounded-lg focus:ring-1 focus:ring-[#2563EB]/50 focus:border-[#2563EB] transition-all placeholder:text-[#CBD5E1]"
+                    />
+                  )}
                 />
-              </div>
-            </>
-          )}
-        />
-      </div>
+              </FormField>
+              <FormField id={`exp-${index}-startDate`} label={t("startDate")}>
+                <Controller
+                  control={control}
+                  name={`experience.${index}.startDate`}
+                  render={({ field: f }) => (
+                    <Input
+                      {...f}
+                      id={`exp-${index}-startDate`}
+                      value={f.value ?? ""}
+                      placeholder="Jan 2022"
+                      className="h-8 text-sm border-[#E2E8F0] rounded-lg focus:ring-1 focus:ring-[#2563EB]/50 focus:border-[#2563EB] transition-all placeholder:text-[#CBD5E1]"
+                    />
+                  )}
+                />
+              </FormField>
 
-      {/* Bullet Points */}
-      <div>
-        <Label className="mb-2 block font-medium text-[#0B132B]">{t("bulletPoints")}</Label>
-        <div className="space-y-2">
-          {bulletFields.map((bullet, bIndex) => (
-            <div key={bullet.id} className="flex items-center gap-2">
-              <span className="text-[#2563EB] mt-0.5 flex-shrink-0">•</span>
+              {/* Current toggle */}
               <Controller
                 control={control}
-                name={`experience.${index}.bulletPoints.${bIndex}` as any}
+                name={`experience.${index}.current`}
                 render={({ field }) => (
-                  <Input
-                    {...field}
-                    value={field.value ?? ""}
-                    placeholder="Increased conversion rate by 32%..."
-                    className="h-9 border-[#E2E8F0] focus:ring-2 focus:ring-[#2563EB]"
-                  />
+                  <div className="space-y-1">
+                    <span className="text-[11px] font-semibold text-[#64748B] uppercase tracking-wide block opacity-0 select-none">
+                      &nbsp;
+                    </span>
+                    <div className="flex items-center h-8">
+                      <Checkbox
+                        id={`exp-current-${index}`}
+                        label={t("currentlyWorking")}
+                        checked={field.value ?? false}
+                        onChange={(e) => field.onChange(e.target.checked)}
+                      />
+                    </div>
+                  </div>
                 )}
               />
-              <Button
-                type="button"
-                variant="destructive"
-                size="icon"
-                onClick={() => removeBullet(bIndex)}
-                className="h-8 w-8 rounded-lg flex-shrink-0"
-              >
-                <Trash2 size={12} />
-              </Button>
+
+              {/* End date */}
+              <Controller
+                control={control}
+                name={`experience.${index}.current`}
+                render={({ field: currentField }) =>
+                  currentField.value ? (
+                    <></>
+                  ) : (
+                    <FormField id={`exp-${index}-endDate`} label={t("endDate")}>
+                      <Controller
+                        control={control}
+                        name={`experience.${index}.endDate`}
+                        render={({ field: f }) => (
+                          <Input
+                            {...f}
+                            id={`exp-${index}-endDate`}
+                            value={f.value ?? ""}
+                            placeholder="Mar 2024"
+                            className="h-8 text-sm border-[#E2E8F0] rounded-lg focus:ring-1 focus:ring-[#2563EB]/50 focus:border-[#2563EB] transition-all placeholder:text-[#CBD5E1]"
+                          />
+                        )}
+                      />
+                    </FormField>
+                  )
+                }
+              />
             </div>
-          ))}
-        </div>
-        <Button
-          type="button"
-          variant="ghost"
-          size="sm"
-          className="mt-2 text-[#2563EB] hover:text-[#1d4ed8] hover:bg-blue-50 font-medium"
-          onClick={() => appendBullet("" as any)}
-        >
-          <Plus size={12} className="mr-1" />
-          {t("addBulletPoint")}
-        </Button>
-      </div>
-    </div>
+
+            {/* Description */}
+            <div className="space-y-1.5">
+              <span className="text-[11px] font-semibold text-[#64748B] uppercase tracking-wide block">
+                {t("description")}
+              </span>
+              <Controller
+                control={control}
+                name={`experience.${index}.description`}
+                render={({ field }) => (
+                  <>
+                    <RichTextEditor
+                      id={`exp-rte-${index}`}
+                      value={field.value ?? ""}
+                      onChange={field.onChange}
+                      placeholder="Briefly describe your role and key responsibilities…"
+                      minHeight="90px"
+                    />
+                    <div className="flex justify-end">
+                      <AIEnhanceButton
+                        value={field.value ?? ""}
+                        onChange={field.onChange}
+                        fieldName="experience"
+                      />
+                    </div>
+                  </>
+                )}
+              />
+            </div>
+
+            {/* Bullet points */}
+            <div className="space-y-1.5">
+              <span className="text-[11px] font-semibold text-[#64748B] uppercase tracking-wide block">
+                {t("bulletPoints")}
+              </span>
+              <div className="space-y-1.5">
+                {bulletFields.map((bullet, bIndex) => (
+                  <div key={bullet.id} className="flex items-center gap-2">
+                    <span className="text-[#2563EB] text-sm flex-shrink-0">•</span>
+                    <Controller
+                      control={control}
+                      name={`experience.${index}.bulletPoints.${bIndex}` as any}
+                      render={({ field }) => (
+                        <Input
+                          {...field}
+                          value={field.value ?? ""}
+                          placeholder="Increased conversion rate by 32%…"
+                          className="flex-1 h-8 rounded-lg border-[#E2E8F0] text-sm focus:ring-1 focus:ring-[#2563EB]/50 focus:border-[#2563EB]"
+                        />
+                      )}
+                    />
+                    <button
+                      type="button"
+                      onClick={() => removeBullet(bIndex)}
+                      className="h-7 w-7 flex items-center justify-center rounded-lg text-[#CBD5E1] hover:text-red-400 hover:bg-red-50 transition-colors cursor-pointer flex-shrink-0"
+                    >
+                      <Trash2 size={11} />
+                    </button>
+                  </div>
+                ))}
+              </div>
+              <button
+                type="button"
+                onClick={() => appendBullet("" as any)}
+                className="flex items-center gap-1 text-xs font-medium text-[#2563EB] hover:text-[#1d4ed8] hover:bg-blue-50 px-2 py-1 rounded-lg transition-colors cursor-pointer"
+              >
+                <Plus size={11} />
+                {t("addBulletPoint")}
+              </button>
+            </div>
+          </CollapsibleCard>
+        );
+      }}
+    />
   );
 }
-
-function ControlledInput({
-  control,
-  name,
-  label,
-  placeholder,
-}: {
-  control: Control<ResumeContent>;
-  name: any;
-  label: string;
-  placeholder: string;
-}) {
-  return (
-    <div>
-      <Label htmlFor={name} className="mb-1.5 block font-medium text-[#0B132B]">{label}</Label>
-      <Controller
-        control={control}
-        name={name}
-        render={({ field }) => (
-          <Input
-            {...field}
-            id={name}
-            value={field.value ?? ""}
-            placeholder={placeholder}
-            className="h-10 border-[#E2E8F0] focus:ring-2 focus:ring-[#2563EB]"
-          />
-        )}
-      />
-    </div>
-  );
-}
-
-

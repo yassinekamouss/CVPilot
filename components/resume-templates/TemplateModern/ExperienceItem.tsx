@@ -1,4 +1,7 @@
+"use client";
+
 import { ResumeContent } from "@/schemas/resume.schema";
+import { HtmlContent } from "@/components/resume-templates/HtmlContent";
 
 type ExperienceEntry = NonNullable<ResumeContent["experience"]>[number];
 
@@ -20,9 +23,10 @@ export const ExperienceItem = ({ experience }: ExperienceItemProps) => (
         <p className="text-[9pt] italic text-neutral-600 leading-tight">{experience.company}</p>
 
         {experience.description && (
-            <p className="mt-1 text-[9pt] leading-snug text-neutral-600">
-                {experience.description}
-            </p>
+            <HtmlContent
+                html={experience.description}
+                className="mt-1 text-[9pt] leading-snug text-neutral-600 [&_p]:my-0.5 [&_strong]:font-semibold [&_em]:italic [&_ul]:list-disc [&_ul]:pl-3 [&_li]:my-0.5"
+            />
         )}
 
         {experience.bulletPoints && experience.bulletPoints.length > 0 && (

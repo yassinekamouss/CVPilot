@@ -1,4 +1,7 @@
+"use client";
+
 import { ResumeContent } from "@/schemas/resume.schema";
+import { HtmlContent } from "@/components/resume-templates/HtmlContent";
 
 type EducationEntry = NonNullable<ResumeContent["education"]>[number];
 
@@ -22,9 +25,10 @@ export const EducationItem = ({ education }: EducationItemProps) => (
             {education.school}
         </p>
         {education.description && (
-            <p className="mt-1 text-[9pt] leading-snug text-neutral-600">
-                {education.description}
-            </p>
+            <HtmlContent
+                html={education.description}
+                className="mt-1 text-[9pt] leading-snug text-neutral-600 [&_p]:my-0.5 [&_strong]:font-semibold [&_em]:italic [&_ul]:list-disc [&_ul]:pl-3 [&_li]:my-0.5"
+            />
         )}
     </div>
 );

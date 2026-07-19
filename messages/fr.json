@@ -219,6 +219,17 @@
     "certifications": "Certifications",
     "projects": "Projets",
     "interests": "Centres d'Intérêt",
+    "personalInfoDesc": "Indiquez aux employeurs qui vous êtes et comment vous contacter.",
+    "summaryDesc": "Un bref aperçu de votre parcours professionnel et de vos réalisations clés.",
+    "experienceDesc": "Mettez en valeur vos rôles passés, vos responsabilités et votre impact.",
+    "educationDesc": "Listez votre parcours académique et vos diplômes.",
+    "skillsDesc": "Présentez vos compétences techniques et interpersonnelles.",
+    "languagesDesc": "Listez les langues que vous parlez et votre niveau de compétence.",
+    "certificationsDesc": "Incluez les certifications pertinentes pour renforcer votre crédibilité.",
+    "projectsDesc": "Présentez des projets personnels ou professionnels pour démontrer vos capacités.",
+    "interestsDesc": "Ajoutez quelques centres d'intérêt personnels pour compléter votre profil.",
+    "optionalSections": "Sections Optionnelles",
+    "delete": "Supprimer",
     "firstName": "Prénom",
     "lastName": "Nom",
     "jobTitle": "Titre du Poste",
@@ -275,6 +286,13 @@
     "backToDashboard": "Retour",
     "resumeTitle": "CV sans titre",
     "zoomLevel": "Zoom {percent}%",
-    "pageOverflowWarning": "Votre CV s'étend maintenant sur 2 pages. Les recruteurs préfèrent généralement un CV d'une seule page — essayez de réduire le contenu."
+    "pageOverflowWarning": "Votre CV s'étend maintenant sur 2 pages. Les recruteurs préfèrent généralement un CV d'une page — essayez de réduire le contenu.",
+    "finalize": "Finaliser",
+    "finalizeDesc": "Ajoutez des sections facultatives et passez votre CV en revue.",
+    "addCustomSection": "Ajouter une section personnalisée",
+    "customSectionTitle": "Titre de la section",
+    "customSectionType": "Type de section",
+    "completeness": "Complétude",
+    "step": "Étape"
   }
 }

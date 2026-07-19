@@ -219,6 +219,17 @@
     "certifications": "Certifications",
     "projects": "Projects",
     "interests": "Interests",
+    "personalInfoDesc": "Tell employers who you are and how they can contact you.",
+    "summaryDesc": "A brief overview of your professional background and key achievements.",
+    "experienceDesc": "Highlight your past roles, responsibilities, and impact.",
+    "educationDesc": "List your academic background and degrees.",
+    "skillsDesc": "Showcase your technical and soft skills.",
+    "languagesDesc": "List the languages you speak and your proficiency.",
+    "certificationsDesc": "Include relevant certifications to boost credibility.",
+    "projectsDesc": "Showcase personal or professional projects to demonstrate your abilities.",
+    "interestsDesc": "Add a few personal interests to round out your profile.",
+    "optionalSections": "Optional Sections",
+    "delete": "Delete",
     "firstName": "First Name",
     "lastName": "Last Name",
     "jobTitle": "Job Title",
@@ -275,6 +286,13 @@
     "backToDashboard": "Back",
     "resumeTitle": "Untitled Resume",
     "zoomLevel": "{percent}% zoom",
-    "pageOverflowWarning": "Your resume now spans 2 pages. Recruiters generally prefer a single-page resume — try trimming some content."
+    "pageOverflowWarning": "Your resume now spans 2 pages. Recruiters generally prefer a single-page resume — try trimming some content.",
+    "finalize": "Finalize",
+    "finalizeDesc": "Add optional sections and review your resume.",
+    "addCustomSection": "Add Custom Section",
+    "customSectionTitle": "Section Title",
+    "customSectionType": "Section Type",
+    "completeness": "Completeness",
+    "step": "Step"
   }
 }

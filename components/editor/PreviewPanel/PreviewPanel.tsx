@@ -18,10 +18,12 @@ interface PreviewPanelProps {
 /**
  * PreviewPanel
  *
- * Responsibilities:
- * - Renders the preview header bar (live sync indicator + page navigation).
- * - Delegates scaling and page rendering to PreviewScaler.
+ * Pure sticky preview pane. Responsibilities:
+ * - Thin header bar with live-sync indicator and optional page navigation.
+ * - Delegates all scaling logic to PreviewScaler.
  * - Injects live form data into child template components.
+ *
+ * ResumeScore has been moved to the editor pane (HorizontalStepper completeness bar).
  */
 export function PreviewPanel({
   data,
@@ -33,7 +35,7 @@ export function PreviewPanel({
 }: PreviewPanelProps) {
   const t = useTranslations("Builder");
 
-  // Inject live form data into the template child component
+  // Inject live form data into the template child
   const renderedChildren = React.Children.map(children, (child) => {
     if (React.isValidElement(child)) {
       return React.cloneElement(child, { data } as Record<string, unknown>);
@@ -45,18 +47,18 @@ export function PreviewPanel({
   const canGoNext = currentPage < totalPages;
 
   return (
-    <div className="flex-1 bg-[#F1F5F9] h-full flex flex-col overflow-hidden relative">
+    <div className="flex-1 bg-neutral-100 h-full flex flex-col overflow-hidden relative">
       {/* ─── Header bar ─── */}
-      <div className="h-12 border-b border-[#E2E8F0] bg-white flex items-center justify-between px-4 z-10 flex-shrink-0">
+      <div className="h-10 border-b border-[#E2E8F0] bg-white flex items-center justify-between px-4 z-10 flex-shrink-0">
         {/* Live sync indicator */}
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-1.5">
           <span className="h-1.5 w-1.5 rounded-full bg-[#10B981] animate-pulse flex-shrink-0" />
-          <span className="text-xs text-[#64748B] font-medium hidden sm:block">
+          <span className="text-[10px] text-[#64748B] font-medium hidden sm:block">
             {t("syncing")}
           </span>
         </div>
 
-        {/* Page navigation — only shown when resume spans multiple pages */}
+        {/* Page navigation — only when multi-page */}
         {totalPages > 1 && (
           <PageNavigation
             currentPage={currentPage}
@@ -72,17 +74,14 @@ export function PreviewPanel({
         )}
 
         {/* Preview label */}
-        <span className="text-xs font-semibold text-[#0B132B]">
+        <span className="text-[10px] font-semibold text-[#0B132B] uppercase tracking-wide">
           {t("livePreview")}
         </span>
       </div>
 
       {/* ─── Scaled preview area ─── */}
-      <div className="flex-grow overflow-y-auto overflow-x-hidden relative">
-        <PreviewScaler
-          currentPage={currentPage}
-          onTotalPages={onTotalPages}
-        >
+      <div className="flex-1 min-h-0 relative overflow-hidden">
+        <PreviewScaler currentPage={currentPage} onTotalPages={onTotalPages}>
           {renderedChildren}
         </PreviewScaler>
       </div>
@@ -104,12 +103,6 @@ interface PageNavigationProps {
   labelPageOf: string;
 }
 
-/**
- * PageNavigation
- *
- * A focused, accessible page-turner control.
- * Receives all state as props — no internal state.
- */
 function PageNavigation({
   canGoPrev,
   canGoNext,
@@ -120,18 +113,18 @@ function PageNavigation({
   labelPageOf,
 }: PageNavigationProps) {
   return (
-    <div className="flex items-center gap-1.5 bg-[#F8FAFC] border border-[#E2E8F0] rounded-lg px-1 py-0.5">
+    <div className="flex items-center gap-1 bg-[#F8FAFC] border border-[#E2E8F0] rounded-lg px-1 py-0.5">
       <button
         type="button"
         onClick={onPrev}
         disabled={!canGoPrev}
         aria-label={labelPrev}
-        className="w-6 h-6 flex items-center justify-center rounded-md text-[#64748B] hover:bg-[#E2E8F0] hover:text-[#0B132B] disabled:opacity-30 disabled:cursor-not-allowed transition-all duration-150 cursor-pointer"
+        className="w-5 h-5 flex items-center justify-center rounded text-[#64748B] hover:bg-[#E2E8F0] hover:text-[#0B132B] disabled:opacity-30 disabled:cursor-not-allowed transition-all cursor-pointer"
       >
-        <ChevronLeft size={14} strokeWidth={2.5} />
+        <ChevronLeft size={12} strokeWidth={2.5} />
       </button>
 
-      <span className="text-[11px] font-semibold text-[#0B132B] min-w-[64px] text-center select-none">
+      <span className="text-[10px] font-semibold text-[#0B132B] min-w-[56px] text-center select-none">
         {labelPageOf}
       </span>
 
@@ -140,9 +133,9 @@ function PageNavigation({
         onClick={onNext}
         disabled={!canGoNext}
         aria-label={labelNext}
-        className="w-6 h-6 flex items-center justify-center rounded-md text-[#64748B] hover:bg-[#E2E8F0] hover:text-[#0B132B] disabled:opacity-30 disabled:cursor-not-allowed transition-all duration-150 cursor-pointer"
+        className="w-5 h-5 flex items-center justify-center rounded text-[#64748B] hover:bg-[#E2E8F0] hover:text-[#0B132B] disabled:opacity-30 disabled:cursor-not-allowed transition-all cursor-pointer"
       >
-        <ChevronRight size={14} strokeWidth={2.5} />
+        <ChevronRight size={12} strokeWidth={2.5} />
       </button>
     </div>
   );

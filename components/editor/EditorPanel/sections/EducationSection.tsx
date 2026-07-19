@@ -3,12 +3,12 @@
 import { Controller, Control, useFieldArray } from "react-hook-form";
 import { ResumeContent } from "@/schemas/resume.schema";
 import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
-import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
-import { Plus, Trash2, GripVertical } from "lucide-react";
+import { Plus } from "lucide-react";
 import { useTranslations } from "next-intl";
-import { SectionTitle } from "./SectionTitle";
+import { CollapsibleCard } from "./CollapsibleCard";
+import { RichTextEditor } from "./RichTextEditor";
+import { FormField } from "../FormField";
 
 interface EducationSectionProps {
   control: Control<ResumeContent>;
@@ -22,106 +22,179 @@ export function EducationSection({ control }: EducationSectionProps) {
   });
 
   return (
-    <section id="section-education" className="animate-fadeIn">
-      <SectionTitle>{t("education")}</SectionTitle>
-      <div className="space-y-4">
-        {fields.map((field, index) => (
-          <div key={field.id} className="rounded-2xl border border-[#E2E8F0] bg-white p-6 space-y-4 shadow-sm transition-shadow hover:shadow-md">
-            <div className="flex items-center justify-between">
-              <div className="flex items-center gap-2 text-[#94A3B8]">
-                <GripVertical size={14} />
-                <span className="text-xs font-semibold text-[#64748B]">
-                  {t("entry", { number: index + 1 })}
-                </span>
-              </div>
-              <Button
-                type="button"
-                variant="destructive"
-                size="icon"
-                onClick={() => remove(index)}
-                className="h-7 w-7 rounded-lg"
-              >
-                <Trash2 size={13} />
-              </Button>
-            </div>
+    <div className="space-y-2.5">
+      {fields.map((field, index) => (
+        <EducationEntry
+          key={field.id}
+          index={index}
+          control={control}
+          onRemove={() => remove(index)}
+          defaultOpen={!field.school && !field.degree}
+        />
+      ))}
 
-            <div className="grid grid-cols-2 gap-4">
-              <ControlledInput control={control} name={`education.${index}.school`} label={t("school")} placeholder="MIT" className="col-span-2" />
-              <ControlledInput control={control} name={`education.${index}.degree`} label={t("degree")} placeholder="Bachelor of Science" />
-              <ControlledInput control={control} name={`education.${index}.fieldOfStudy`} label={t("fieldOfStudy")} placeholder="Computer Science" />
-              <ControlledInput control={control} name={`education.${index}.startDate`} label={t("startDate")} placeholder="Sep 2018" />
-              <ControlledInput control={control} name={`education.${index}.endDate`} label={t("endDate")} placeholder="Jun 2022" />
-            </div>
-
-            <div>
-              <Label htmlFor={`edu-desc-${index}`} className="mb-1.5 block font-medium text-[#0B132B]">
-                {t("description")}
-              </Label>
-              <Controller
-                control={control}
-                name={`education.${index}.description`}
-                render={({ field }) => (
-                  <Textarea
-                    {...field}
-                    id={`edu-desc-${index}`}
-                    value={field.value ?? ""}
-                    placeholder="Honors, relevant coursework, thesis..."
-                    className="min-h-[72px] border-[#E2E8F0] focus:ring-2 focus:ring-[#2563EB]"
-                  />
-                )}
-              />
-            </div>
-          </div>
-        ))}
-
-        <Button
-          type="button"
-          variant="outline"
-          size="sm"
-          className="w-full border-dashed border-[#E2E8F0] text-[#0B132B] hover:border-[#2563EB] hover:text-[#2563EB] duration-200"
-          onClick={() =>
-            append({ school: "", degree: "", fieldOfStudy: "", startDate: "", endDate: "", description: "" })
-          }
-        >
-          <Plus size={14} className="mr-1" />
-          {t("addEducation")}
-        </Button>
-      </div>
-    </section>
-  );
-}
-
-function ControlledInput({
-  control,
-  name,
-  label,
-  placeholder,
-  className,
-}: {
-  control: Control<ResumeContent>;
-  name: any;
-  label: string;
-  placeholder: string;
-  className?: string;
-}) {
-  return (
-    <div className={className}>
-      <Label htmlFor={name} className="mb-1.5 block font-medium text-[#0B132B]">{label}</Label>
-      <Controller
-        control={control}
-        name={name}
-        render={({ field }) => (
-          <Input
-            {...field}
-            id={name}
-            value={field.value ?? ""}
-            placeholder={placeholder}
-            className="h-10 border-[#E2E8F0] focus:ring-2 focus:ring-[#2563EB]"
-          />
-        )}
-      />
+      <Button
+        type="button"
+        variant="outline"
+        size="sm"
+        onClick={() =>
+          append({ school: "", degree: "", fieldOfStudy: "", startDate: "", endDate: "", description: "" })
+        }
+        className="w-full h-8 rounded-lg border-dashed border-[#E2E8F0] text-[#64748B] hover:border-[#2563EB] hover:text-[#2563EB] hover:bg-blue-50/50 transition-all font-medium text-xs"
+      >
+        <Plus size={12} className="mr-1.5" />
+        {t("addEducation")}
+      </Button>
     </div>
   );
 }
 
+function EducationEntry({
+  index,
+  control,
+  onRemove,
+  defaultOpen,
+}: {
+  index: number;
+  control: Control<ResumeContent>;
+  onRemove: () => void;
+  defaultOpen: boolean;
+}) {
+  const t = useTranslations("Builder");
 
+  return (
+    <Controller
+      control={control}
+      name={`education.${index}`}
+      render={({ field: entryField }) => {
+        const entry = entryField.value as any;
+        const headline = entry?.school || "";
+        const subline = entry?.degree
+          ? `${entry.degree}${entry.fieldOfStudy ? `, ${entry.fieldOfStudy}` : ""}`
+          : "";
+        const startDate = entry?.startDate || "";
+        const endDate = entry?.endDate || "";
+        const dateRange = startDate ? `${startDate}${endDate ? ` — ${endDate}` : ""}` : "";
+
+        return (
+          <CollapsibleCard
+            headline={headline}
+            subline={subline}
+            dateRange={dateRange}
+            index={index + 1}
+            onRemove={onRemove}
+            removeLabel={t("delete")}
+            defaultOpen={defaultOpen}
+          >
+            <div className="space-y-3">
+              {/* School */}
+              <FormField id={`edu-${index}-school`} label={t("school")}>
+                <Controller
+                  control={control}
+                  name={`education.${index}.school`}
+                  render={({ field: f }) => (
+                    <Input
+                      {...f}
+                      id={`edu-${index}-school`}
+                      value={f.value ?? ""}
+                      placeholder="MIT, Stanford, UC Berkeley…"
+                      className="h-8 text-sm border-[#E2E8F0] rounded-lg focus:ring-1 focus:ring-[#2563EB]/50 focus:border-[#2563EB] transition-all placeholder:text-[#CBD5E1]"
+                    />
+                  )}
+                />
+              </FormField>
+
+              {/* Degree + Field */}
+              <div className="grid grid-cols-2 gap-3">
+                <FormField id={`edu-${index}-degree`} label={t("degree")}>
+                  <Controller
+                    control={control}
+                    name={`education.${index}.degree`}
+                    render={({ field: f }) => (
+                      <Input
+                        {...f}
+                        id={`edu-${index}-degree`}
+                        value={f.value ?? ""}
+                        placeholder="Bachelor of Science"
+                        className="h-8 text-sm border-[#E2E8F0] rounded-lg focus:ring-1 focus:ring-[#2563EB]/50 focus:border-[#2563EB] transition-all placeholder:text-[#CBD5E1]"
+                      />
+                    )}
+                  />
+                </FormField>
+                <FormField id={`edu-${index}-field`} label={t("fieldOfStudy")}>
+                  <Controller
+                    control={control}
+                    name={`education.${index}.fieldOfStudy`}
+                    render={({ field: f }) => (
+                      <Input
+                        {...f}
+                        id={`edu-${index}-field`}
+                        value={f.value ?? ""}
+                        placeholder="Computer Science"
+                        className="h-8 text-sm border-[#E2E8F0] rounded-lg focus:ring-1 focus:ring-[#2563EB]/50 focus:border-[#2563EB] transition-all placeholder:text-[#CBD5E1]"
+                      />
+                    )}
+                  />
+                </FormField>
+              </div>
+
+              {/* Dates */}
+              <div className="grid grid-cols-2 gap-3">
+                <FormField id={`edu-${index}-start`} label={t("startDate")}>
+                  <Controller
+                    control={control}
+                    name={`education.${index}.startDate`}
+                    render={({ field: f }) => (
+                      <Input
+                        {...f}
+                        id={`edu-${index}-start`}
+                        value={f.value ?? ""}
+                        placeholder="Sep 2018"
+                        className="h-8 text-sm border-[#E2E8F0] rounded-lg focus:ring-1 focus:ring-[#2563EB]/50 focus:border-[#2563EB] transition-all placeholder:text-[#CBD5E1]"
+                      />
+                    )}
+                  />
+                </FormField>
+                <FormField id={`edu-${index}-end`} label={t("endDate")}>
+                  <Controller
+                    control={control}
+                    name={`education.${index}.endDate`}
+                    render={({ field: f }) => (
+                      <Input
+                        {...f}
+                        id={`edu-${index}-end`}
+                        value={f.value ?? ""}
+                        placeholder="Jun 2022"
+                        className="h-8 text-sm border-[#E2E8F0] rounded-lg focus:ring-1 focus:ring-[#2563EB]/50 focus:border-[#2563EB] transition-all placeholder:text-[#CBD5E1]"
+                      />
+                    )}
+                  />
+                </FormField>
+              </div>
+
+              {/* Description */}
+              <div className="space-y-1.5">
+                <span className="text-[11px] font-semibold text-[#64748B] uppercase tracking-wide block">
+                  {t("description")}
+                </span>
+                <Controller
+                  control={control}
+                  name={`education.${index}.description`}
+                  render={({ field }) => (
+                    <RichTextEditor
+                      id={`edu-rte-${index}`}
+                      value={field.value ?? ""}
+                      onChange={field.onChange}
+                      placeholder="Honors, relevant coursework, thesis…"
+                      minHeight="70px"
+                    />
+                  )}
+                />
+              </div>
+            </div>
+          </CollapsibleCard>
+        );
+      }}
+    />
+  );
+}

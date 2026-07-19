@@ -3,11 +3,10 @@
 import { Controller, Control, useFieldArray } from "react-hook-form";
 import { ResumeContent } from "@/schemas/resume.schema";
 import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import { Plus, Trash2 } from "lucide-react";
 import { useTranslations } from "next-intl";
-import { SectionTitle } from "./SectionTitle";
+import { FormField } from "../FormField";
 
 interface LanguagesSectionProps {
   control: Control<ResumeContent>;
@@ -21,19 +20,22 @@ export function LanguagesSection({ control }: LanguagesSectionProps) {
   });
 
   return (
-    <section id="section-languages" className="animate-fadeIn">
-      <SectionTitle>{t("languages")}</SectionTitle>
-      <div className="rounded-2xl border border-[#E2E8F0] bg-white p-6 space-y-3 shadow-sm">
-        {fields.length > 0 && (
-          <div className="grid grid-cols-[1fr_1fr_32px] gap-2 mb-1">
-            <Label className="text-xs font-semibold text-[#64748B]">{t("languageName")}</Label>
-            <Label className="text-xs font-semibold text-[#64748B]">{t("level")}</Label>
-            <span />
-          </div>
-        )}
+    <div className="space-y-2">
+      {fields.length > 0 && (
+        <div className="grid grid-cols-[1fr_1fr_28px] gap-2 px-0.5">
+          <span className="text-[9px] font-semibold uppercase tracking-wider text-[#94A3B8]">
+            {t("languageName")}
+          </span>
+          <span className="text-[9px] font-semibold uppercase tracking-wider text-[#94A3B8]">
+            {t("level")}
+          </span>
+          <span />
+        </div>
+      )}
 
+      <div className="space-y-1.5">
         {fields.map((field, index) => (
-          <div key={field.id} className="grid grid-cols-[1fr_1fr_32px] gap-2 items-center">
+          <div key={field.id} className="grid grid-cols-[1fr_1fr_28px] gap-2 items-center">
             <Controller
               control={control}
               name={`languages.${index}.name`}
@@ -42,7 +44,7 @@ export function LanguagesSection({ control }: LanguagesSectionProps) {
                   {...f}
                   value={f.value ?? ""}
                   placeholder="English"
-                  className="h-10 border-[#E2E8F0] focus:ring-2 focus:ring-[#2563EB]"
+                  className="h-8 text-sm border-[#E2E8F0] rounded-lg focus:ring-1 focus:ring-[#2563EB]/50 focus:border-[#2563EB] transition-all placeholder:text-[#CBD5E1]"
                 />
               )}
             />
@@ -53,36 +55,32 @@ export function LanguagesSection({ control }: LanguagesSectionProps) {
                 <Input
                   {...f}
                   value={f.value ?? ""}
-                  placeholder="Native, Fluent, B2..."
-                  className="h-10 border-[#E2E8F0] focus:ring-2 focus:ring-[#2563EB]"
+                  placeholder="Native, B2, Fluent…"
+                  className="h-8 text-sm border-[#E2E8F0] rounded-lg focus:ring-1 focus:ring-[#2563EB]/50 focus:border-[#2563EB] transition-all placeholder:text-[#CBD5E1]"
                 />
               )}
             />
-            <Button
+            <button
               type="button"
-              variant="destructive"
-              size="icon"
               onClick={() => remove(index)}
-              className="h-9 w-9 rounded-lg"
+              className="h-7 w-7 flex items-center justify-center rounded-lg text-[#CBD5E1] hover:text-red-400 hover:bg-red-50 transition-colors cursor-pointer"
             >
               <Trash2 size={12} />
-            </Button>
+            </button>
           </div>
         ))}
-
-        <Button
-          type="button"
-          variant="outline"
-          size="sm"
-          className="w-full border-dashed border-[#E2E8F0] text-[#0B132B] hover:border-[#2563EB] hover:text-[#2563EB] duration-200 mt-2"
-          onClick={() => append({ name: "", level: "" })}
-        >
-          <Plus size={14} className="mr-1" />
-          {t("addLanguage")}
-        </Button>
       </div>
-    </section>
+
+      <Button
+        type="button"
+        variant="outline"
+        size="sm"
+        onClick={() => append({ name: "", level: "" })}
+        className="w-full h-8 rounded-lg border-dashed border-[#E2E8F0] text-[#64748B] hover:border-[#2563EB] hover:text-[#2563EB] hover:bg-blue-50/50 transition-all font-medium text-xs"
+      >
+        <Plus size={12} className="mr-1.5" />
+        {t("addLanguage")}
+      </Button>
+    </div>
   );
 }
-
-
