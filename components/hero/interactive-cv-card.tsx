@@ -35,6 +35,7 @@ export default function InteractiveCvCard() {
   const lerpRY = useRef(0);
   const tiltRaf = useRef<number | null>(null);
   const isHovered = useRef(false);
+  const activeIntervalRef = useRef<NodeJS.Timeout | null>(null);
 
   useEffect(() => {
     const loopTilt = () => {
@@ -86,10 +87,10 @@ export default function InteractiveCvCard() {
         (ctx) => {
           const { reduceMotion } = ctx.conditions as { reduceMotion: boolean; motion: boolean };
           if (reduceMotion) {
-            gsap.set(
-              [bgCv1Ref.current, bgCv2Ref.current, atsBadgeRef.current, rewrittenRef.current],
-              { opacity: 1, filter: "blur(0px)", x: 0, y: 0 }
-            );
+            const targets = [bgCv1Ref.current, bgCv2Ref.current, atsBadgeRef.current, rewrittenRef.current].filter(Boolean);
+            if (targets.length > 0) {
+              gsap.set(targets, { opacity: 1, filter: "blur(0px)", x: 0, y: 0 });
+            }
             if (scoreNumberRef.current) scoreNumberRef.current.textContent = String(SCORE_MAX);
             if (circlePercentRef.current) circlePercentRef.current.textContent = `${SCORE_MAX}%`;
             if (circleRef.current) {
@@ -98,27 +99,35 @@ export default function InteractiveCvCard() {
             return;
           }
 
-          gsap.set(bgCv1Ref.current, { x: -50, y: 30, opacity: 0, filter: "blur(6px)" });
-          gsap.set(bgCv2Ref.current, { x: 50, y: -30, opacity: 0, filter: "blur(6px)" });
+          if (bgCv1Ref.current) gsap.set(bgCv1Ref.current, { x: -50, y: 30, opacity: 0, filter: "blur(6px)" });
+          if (bgCv2Ref.current) gsap.set(bgCv2Ref.current, { x: 50, y: -30, opacity: 0, filter: "blur(6px)" });
 
-          gsap.to(bgCv1Ref.current, {
-            x: 0, y: 0, opacity: 0.4, filter: "blur(0px)", duration: 1.4, delay: 1.0, ease: "expo.out",
-            onComplete: () => {
-              gsap.to(bgCv1Ref.current, { y: "-=10", x: "+=4", duration: 4.5, ease: "sine.inOut", repeat: -1, yoyo: true });
-            },
-          });
-          gsap.to(bgCv2Ref.current, {
-            x: 0, y: 0, opacity: 0.4, filter: "blur(0px)", duration: 1.4, delay: 1.25, ease: "expo.out",
-            onComplete: () => {
-              gsap.to(bgCv2Ref.current, { y: "+=12", x: "-=5", duration: 5.2, ease: "sine.inOut", repeat: -1, yoyo: true });
-            },
-          });
+          if (bgCv1Ref.current) {
+            gsap.to(bgCv1Ref.current, {
+              x: 0, y: 0, opacity: 0.4, filter: "blur(0px)", duration: 1.4, delay: 1.0, ease: "expo.out",
+              onComplete: () => {
+                if (bgCv1Ref.current) {
+                  gsap.to(bgCv1Ref.current, { y: "-=10", x: "+=4", duration: 4.5, ease: "sine.inOut", repeat: -1, yoyo: true });
+                }
+              },
+            });
+          }
+          if (bgCv2Ref.current) {
+            gsap.to(bgCv2Ref.current, {
+              x: 0, y: 0, opacity: 0.4, filter: "blur(0px)", duration: 1.4, delay: 1.25, ease: "expo.out",
+              onComplete: () => {
+                if (bgCv2Ref.current) {
+                  gsap.to(bgCv2Ref.current, { y: "+=12", x: "-=5", duration: 5.2, ease: "sine.inOut", repeat: -1, yoyo: true });
+                }
+              },
+            });
+          }
 
-          gsap.set(crossedTextRef.current, { opacity: 0, x: -8 });
-          gsap.set(rewrittenRef.current, { opacity: 0 });
-          gsap.set(scoreNumberRef.current, { opacity: 0 });
-          gsap.set(circleRef.current, { strokeDashoffset: 2 * Math.PI * 24 });
-          gsap.set(circlePercentRef.current, { opacity: 0 });
+          if (crossedTextRef.current) gsap.set(crossedTextRef.current, { opacity: 0, x: -8 });
+          if (rewrittenRef.current) gsap.set(rewrittenRef.current, { opacity: 0 });
+          if (scoreNumberRef.current) gsap.set(scoreNumberRef.current, { opacity: 0 });
+          if (circleRef.current) gsap.set(circleRef.current, { strokeDashoffset: 2 * Math.PI * 24 });
+          if (circlePercentRef.current) gsap.set(circlePercentRef.current, { opacity: 0 });
           if (rewrittenRef.current) rewrittenRef.current.textContent = "";
           if (scoreNumberRef.current) scoreNumberRef.current.textContent = "0";
           keywordRefs.current.forEach((el) => {
@@ -127,24 +136,37 @@ export default function InteractiveCvCard() {
 
           const runAiSequence = () => {
             const seq = gsap.timeline({ delay: 0.2 });
-            seq.to(crossedTextRef.current, { opacity: 1, x: 0, duration: 0.5, ease: "power2.out" });
-            seq.to(rewrittenRef.current, { opacity: 1, duration: 0.3 }, "+=0.6");
+            if (crossedTextRef.current) {
+              seq.to(crossedTextRef.current, { opacity: 1, x: 0, duration: 0.5, ease: "power2.out" });
+            }
+            if (rewrittenRef.current) {
+              seq.to(rewrittenRef.current, { opacity: 1, duration: 0.3 }, "+=0.6");
+            }
             seq.call(() => {
               if (!rewrittenRef.current) return;
               const fullText = `"${REWRITTEN_TEXT}"`;
               let i = 0;
               rewrittenRef.current.textContent = "";
+              if (activeIntervalRef.current) {
+                clearInterval(activeIntervalRef.current);
+              }
               const typeInterval = setInterval(() => {
                 if (!rewrittenRef.current) { clearInterval(typeInterval); return; }
                 rewrittenRef.current.textContent = fullText.slice(0, i + 1);
                 i++;
-                if (i >= fullText.length) clearInterval(typeInterval);
+                if (i >= fullText.length) {
+                  clearInterval(typeInterval);
+                  activeIntervalRef.current = null;
+                }
               }, 22);
+              activeIntervalRef.current = typeInterval;
             }, undefined, "<");
             const typeDuration = (REWRITTEN_TEXT.length + 2) * 0.022 + 0.15;
             seq.to({}, { duration: typeDuration });
             keywordRefs.current.forEach((el, i) => {
-              seq.to(el, { opacity: 1, scale: 1, duration: 0.35, ease: "back.out(1.6)" }, `+=${i === 0 ? 0.3 : 0.18}`);
+              if (el) {
+                seq.to(el, { opacity: 1, scale: 1, duration: 0.35, ease: "back.out(1.6)" }, `+=${i === 0 ? 0.3 : 0.18}`);
+              }
             });
             const scoreProxy = { val: 0 };
             seq.to(scoreProxy, {
@@ -154,23 +176,29 @@ export default function InteractiveCvCard() {
                 if (circlePercentRef.current) circlePercentRef.current.textContent = `${Math.round(scoreProxy.val)}%`;
               },
               onStart: () => {
-                gsap.to(scoreNumberRef.current, { opacity: 1, duration: 0.3 });
-                gsap.to(circlePercentRef.current, { opacity: 1, duration: 0.3 });
+                if (scoreNumberRef.current) gsap.to(scoreNumberRef.current, { opacity: 1, duration: 0.3 });
+                if (circlePercentRef.current) gsap.to(circlePercentRef.current, { opacity: 1, duration: 0.3 });
               },
             }, "+=0.2");
-            seq.to(circleRef.current, {
-              strokeDashoffset: 2 * Math.PI * 24 * (1 - SCORE_MAX / 100),
-              duration: 1.8, ease: "power2.out",
-            }, "<");
+            if (circleRef.current) {
+              seq.to(circleRef.current, {
+                strokeDashoffset: 2 * Math.PI * 24 * (1 - SCORE_MAX / 100),
+                duration: 1.8, ease: "power2.out",
+              }, "<");
+            }
             seq.to({}, { duration: 3.5 });
             seq.call(() => {
-              gsap.set(crossedTextRef.current, { opacity: 0, x: -8 });
-              gsap.set(rewrittenRef.current, { opacity: 0 });
-              if (rewrittenRef.current) rewrittenRef.current.textContent = "";
-              gsap.set(scoreNumberRef.current, { opacity: 0 });
-              if (scoreNumberRef.current) scoreNumberRef.current.textContent = "0";
-              gsap.set(circleRef.current, { strokeDashoffset: 2 * Math.PI * 24 });
-              gsap.set(circlePercentRef.current, { opacity: 0 });
+              if (crossedTextRef.current) gsap.set(crossedTextRef.current, { opacity: 0, x: -8 });
+              if (rewrittenRef.current) {
+                gsap.set(rewrittenRef.current, { opacity: 0 });
+                rewrittenRef.current.textContent = "";
+              }
+              if (scoreNumberRef.current) {
+                gsap.set(scoreNumberRef.current, { opacity: 0 });
+                scoreNumberRef.current.textContent = "0";
+              }
+              if (circleRef.current) gsap.set(circleRef.current, { strokeDashoffset: 2 * Math.PI * 24 });
+              if (circlePercentRef.current) gsap.set(circlePercentRef.current, { opacity: 0 });
               keywordRefs.current.forEach((el) => { if (el) gsap.set(el, { opacity: 0.3, scale: 0.96 }); });
               gsap.delayedCall(1.0, runAiSequence);
             });
@@ -178,19 +206,28 @@ export default function InteractiveCvCard() {
           gsap.delayedCall(1.6, runAiSequence);
 
           const shimmerTl = gsap.timeline({ repeat: -1, repeatDelay: 4 });
-          shimmerTl.fromTo(atsBadgeRef.current, { backgroundPosition: "-200% center" }, { backgroundPosition: "200% center", duration: 1.2, ease: "none", delay: 3 });
+          if (atsBadgeRef.current) {
+            shimmerTl.fromTo(atsBadgeRef.current, { backgroundPosition: "-200% center" }, { backgroundPosition: "200% center", duration: 1.2, ease: "none", delay: 3 });
+          }
 
           gsap.delayedCall(2.5, () => {
             keywordRefs.current.forEach((el, i) => {
-              gsap.to(el, {
-                boxShadow: "0 0 8px 1px rgba(16,185,129,0.25)",
-                duration: 0.6, delay: i * 0.4 + Math.random() * 1.5, ease: "sine.out", repeat: -1, yoyo: true, repeatDelay: 3 + i * 0.7,
-              });
+              if (el) {
+                gsap.to(el, {
+                  boxShadow: "0 0 8px 1px rgba(16,185,129,0.25)",
+                  duration: 0.6, delay: i * 0.4 + Math.random() * 1.5, ease: "sine.out", repeat: -1, yoyo: true, repeatDelay: 3 + i * 0.7,
+                });
+              }
             });
           });
         }
       );
-      return () => mm.revert();
+      return () => {
+        mm.revert();
+        if (activeIntervalRef.current) {
+          clearInterval(activeIntervalRef.current);
+        }
+      };
     },
     { scope: containerRef }
   );

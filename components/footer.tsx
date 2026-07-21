@@ -43,9 +43,8 @@ export default async function Footer() {
                 <Image 
                   src="/main_logo_dark_mode.svg" 
                   alt="PROCV" 
-                  width={32} 
+                  width={77} 
                   height={32} 
-                  className="h-8 w-auto" 
                 />
               </Link>
             </div>

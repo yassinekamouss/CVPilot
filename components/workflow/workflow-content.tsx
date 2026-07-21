@@ -224,13 +224,14 @@ export default function WorkflowContent() {
                                 • {t("alignedDesc1")}
                               </p>
                             )}
-                            {activePhase === 2 && (
-                              <div ref={typedTextRef}>
-                                <p className="text-slate-900 font-medium bg-[#10B981]/10 border border-[#10B981]/20 p-2.5 rounded-md shadow-sm">
-                                  {t("optimizedDesc")}
-                                </p>
-                              </div>
-                            )}
+                            <div 
+                              ref={typedTextRef}
+                              className={activePhase === 2 ? "block" : "hidden"}
+                            >
+                              <p className="text-slate-900 font-medium bg-[#10B981]/10 border border-[#10B981]/20 p-2.5 rounded-md shadow-sm">
+                                {t("optimizedDesc")}
+                              </p>
+                            </div>
                           </div>
                         </div>
                       </div>

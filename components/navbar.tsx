@@ -24,7 +24,7 @@ export default function NavBar() {
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2 pl-2">
             <Link href="/" className="flex items-center gap-2">
-              <Image src="/main_logo.svg" alt="PROCV" width={32} height={32} className="h-8 w-auto" priority />
+              <Image src="/main_logo.svg" alt="PROCV" width={77} height={32} priority />
             </Link>
           </div>
 

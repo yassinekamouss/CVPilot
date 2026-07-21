@@ -41,38 +41,63 @@ export default function HeroContent() {
         (ctx) => {
           const { reduceMotion } = ctx.conditions as { reduceMotion: boolean; motion: boolean };
           if (reduceMotion) {
-            gsap.set(
-              [titleLine1Ref.current, titleLine2Ref.current, descRef.current, ctaPrimaryRef.current, ctaSecondaryRef.current, trustRef.current, cardContainerRef.current],
-              { opacity: 1, y: 0, clipPath: "none" }
-            );
+            const targets = [titleLine1Ref.current, titleLine2Ref.current, descRef.current, ctaPrimaryRef.current, ctaSecondaryRef.current, trustRef.current, cardContainerRef.current].filter(Boolean);
+            if (targets.length > 0) {
+              gsap.set(targets, { opacity: 1, y: 0, clipPath: "none" });
+            }
             return;
           }
 
           const headerEl = document.querySelector("header");
           if (headerEl) gsap.set(headerEl, { y: -20, autoAlpha: 0 });
 
-          gsap.set([titleLine1Ref.current, titleLine2Ref.current], { y: 60, opacity: 0, clipPath: "inset(0 0 100% 0)" });
-          gsap.set(cvThumbnailRef.current, { scale: 0.9, rotation: -4, opacity: 0 });
-          gsap.set(descRef.current, { y: 24, opacity: 0 });
-          gsap.set([ctaPrimaryRef.current, ctaSecondaryRef.current], { y: 18, opacity: 0 });
-          gsap.set(trustRef.current, { y: 12, opacity: 0 });
-          gsap.set(cardContainerRef.current, { x: 60, y: 20, opacity: 0, scale: 0.95, rotation: 2.5 });
+          const lineTargets = [titleLine1Ref.current, titleLine2Ref.current].filter(Boolean);
+          if (lineTargets.length > 0) {
+            gsap.set(lineTargets, { y: 60, opacity: 0, clipPath: "inset(0 0 100% 0)" });
+          }
+          if (cvThumbnailRef.current) gsap.set(cvThumbnailRef.current, { scale: 0.9, rotation: -4, opacity: 0 });
+          if (descRef.current) gsap.set(descRef.current, { y: 24, opacity: 0 });
+          const ctaTargets = [ctaPrimaryRef.current, ctaSecondaryRef.current].filter(Boolean);
+          if (ctaTargets.length > 0) {
+            gsap.set(ctaTargets, { y: 18, opacity: 0 });
+          }
+          if (trustRef.current) gsap.set(trustRef.current, { y: 12, opacity: 0 });
+          if (cardContainerRef.current) gsap.set(cardContainerRef.current, { x: 60, y: 20, opacity: 0, scale: 0.95, rotation: 2.5 });
 
           const entranceTl = gsap.timeline({ defaults: { ease: "power4.out" } });
           if (headerEl) {
             entranceTl.fromTo(headerEl, { y: -20, autoAlpha: 0 }, { y: 0, autoAlpha: 1, duration: 0.8, ease: "expo.out" }, 0);
           }
-          entranceTl.to(titleLine1Ref.current, { y: 0, opacity: 1, clipPath: "inset(0 0 0% 0)", duration: 1.0, ease: "expo.out" }, 0.3);
-          entranceTl.to(titleLine2Ref.current, { y: 0, opacity: 1, clipPath: "inset(0 0 0% 0)", duration: 1.0, ease: "expo.out" }, 0.5);
-          entranceTl.to(cvThumbnailRef.current, { scale: 1, rotation: 0, opacity: 1, duration: 0.9, ease: "back.out(1.4)" }, 0.65);
-          entranceTl.to(descRef.current, { y: 0, opacity: 1, duration: 0.9, ease: "power3.out" }, 0.85);
-          entranceTl.to([ctaPrimaryRef.current, ctaSecondaryRef.current], { y: 0, opacity: 1, duration: 0.7, ease: "power3.out", stagger: 0.12 }, 1.0);
-          entranceTl.to(trustRef.current, { y: 0, opacity: 1, duration: 0.6, ease: "power2.out" }, 1.25);
-          entranceTl.to(cardContainerRef.current, { x: 0, y: 0, opacity: 1, scale: 1, rotation: 0, duration: 1.2, ease: "expo.out" }, 0.55);
+          if (titleLine1Ref.current) {
+            entranceTl.to(titleLine1Ref.current, { y: 0, opacity: 1, clipPath: "inset(0 0 0% 0)", duration: 1.0, ease: "expo.out" }, 0.3);
+          }
+          if (titleLine2Ref.current) {
+            entranceTl.to(titleLine2Ref.current, { y: 0, opacity: 1, clipPath: "inset(0 0 0% 0)", duration: 1.0, ease: "expo.out" }, 0.5);
+          }
+          if (cvThumbnailRef.current) {
+            entranceTl.to(cvThumbnailRef.current, { scale: 1, rotation: 0, opacity: 1, duration: 0.9, ease: "back.out(1.4)" }, 0.65);
+          }
+          if (descRef.current) {
+            entranceTl.to(descRef.current, { y: 0, opacity: 1, duration: 0.9, ease: "power3.out" }, 0.85);
+          }
+          const ctaActiveTargets = [ctaPrimaryRef.current, ctaSecondaryRef.current].filter(Boolean);
+          if (ctaActiveTargets.length > 0) {
+            entranceTl.to(ctaActiveTargets, { y: 0, opacity: 1, duration: 0.7, ease: "power3.out", stagger: 0.12 }, 1.0);
+          }
+          if (trustRef.current) {
+            entranceTl.to(trustRef.current, { y: 0, opacity: 1, duration: 0.6, ease: "power2.out" }, 1.25);
+          }
+          if (cardContainerRef.current) {
+            entranceTl.to(cardContainerRef.current, { x: 0, y: 0, opacity: 1, scale: 1, rotation: 0, duration: 1.2, ease: "expo.out" }, 0.55);
+          }
 
           entranceTl.call(() => {
-            gsap.to(cardContainerRef.current, { y: -8, duration: 3.2, ease: "sine.inOut", repeat: -1, yoyo: true });
-            gsap.to(ctaPrimaryRef.current, { scale: 1.012, duration: 2.4, ease: "sine.inOut", repeat: -1, yoyo: true });
+            if (cardContainerRef.current) {
+              gsap.to(cardContainerRef.current, { y: -8, duration: 3.2, ease: "sine.inOut", repeat: -1, yoyo: true });
+            }
+            if (ctaPrimaryRef.current) {
+              gsap.to(ctaPrimaryRef.current, { scale: 1.012, duration: 2.4, ease: "sine.inOut", repeat: -1, yoyo: true });
+            }
           });
 
           const onMouseMove = (e: MouseEvent) => {
@@ -88,27 +113,36 @@ export default function HeroContent() {
             lerpY.current += (mouseY.current - lerpY.current) * ease;
             const mx = lerpX.current;
             const my = lerpY.current;
-            gsap.set([titleLine1Ref.current, titleLine2Ref.current], { x: mx * 6, y: my * 4 });
-            gsap.set(cardContainerRef.current, { x: mx * 18, y: my * 12 });
+            const titleTargets = [titleLine1Ref.current, titleLine2Ref.current].filter(Boolean);
+            if (titleTargets.length > 0) {
+              gsap.set(titleTargets, { x: mx * 6, y: my * 4 });
+            }
+            if (cardContainerRef.current) {
+              gsap.set(cardContainerRef.current, { x: mx * 18, y: my * 12 });
+            }
             rafRef.current = requestAnimationFrame(loopParallax);
           };
           rafRef.current = requestAnimationFrame(loopParallax);
 
-          gsap.to(containerRef.current, {
-            opacity: 0.5, ease: "none",
-            scrollTrigger: { trigger: containerRef.current, start: "bottom 80%", end: "bottom 20%", scrub: 1.2 },
-          });
-          gsap.to(cardContainerRef.current, {
-            y: -40, ease: "none",
-            scrollTrigger: { trigger: containerRef.current, start: "top top", end: "bottom top", scrub: 1.5 },
-          });
+          if (containerRef.current) {
+            gsap.to(containerRef.current, {
+              opacity: 0.5, ease: "none",
+              scrollTrigger: { trigger: containerRef.current, start: "bottom 80%", end: "bottom 20%", scrub: 1.2 },
+            });
+          }
+          if (cardContainerRef.current && containerRef.current) {
+            gsap.to(cardContainerRef.current, {
+              y: -40, ease: "none",
+              scrollTrigger: { trigger: containerRef.current, start: "top top", end: "bottom top", scrub: 1.5 },
+            });
+          }
 
           const leftCvEl = containerRef.current?.querySelector(".bg-cv-left");
           const rightCvEl = containerRef.current?.querySelector(".bg-cv-right");
-          if (leftCvEl) {
+          if (leftCvEl && containerRef.current) {
             gsap.to(leftCvEl, { x: -30, y: -20, ease: "none", scrollTrigger: { trigger: containerRef.current, start: "top top", end: "bottom top", scrub: 2 } });
           }
-          if (rightCvEl) {
+          if (rightCvEl && containerRef.current) {
             gsap.to(rightCvEl, { x: 30, y: 20, ease: "none", scrollTrigger: { trigger: containerRef.current, start: "top top", end: "bottom top", scrub: 2 } });
           }
 

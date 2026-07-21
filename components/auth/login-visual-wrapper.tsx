@@ -28,26 +28,28 @@ export default function LoginVisualWrapper({
           const items = containerRef.current?.querySelectorAll(".animate-stagger-item");
 
           if (reduceMotion) {
-            gsap.set(cardRef.current, { opacity: 1, y: 0 });
-            if (items) gsap.set(items, { opacity: 1, y: 0 });
+            if (cardRef.current) gsap.set(cardRef.current, { opacity: 1, y: 0 });
+            if (items && items.length > 0) gsap.set(items, { opacity: 1, y: 0 });
             return;
           }
 
-          gsap.set(cardRef.current, { y: 40, opacity: 0, scale: 0.98 });
-          if (items) gsap.set(items, { opacity: 0, y: 20 });
+          if (cardRef.current) gsap.set(cardRef.current, { y: 40, opacity: 0, scale: 0.98 });
+          if (items && items.length > 0) gsap.set(items, { opacity: 0, y: 20 });
 
           const tl = gsap.timeline({ defaults: { ease: "power4.out" } });
 
-          tl.to(
-            cardRef.current,
-            {
-              y: 0,
-              opacity: 1,
-              scale: 1,
-              duration: 1.2,
-            },
-            0.1
-          );
+          if (cardRef.current) {
+            tl.to(
+              cardRef.current,
+              {
+                y: 0,
+                opacity: 1,
+                scale: 1,
+                duration: 1.2,
+              },
+              0.1
+            );
+          }
 
           if (items && items.length > 0) {
             tl.to(

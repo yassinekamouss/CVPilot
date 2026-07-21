@@ -58,7 +58,7 @@ export default async function LoginPage({
               src="/main_logo.svg"
               alt="PROCV"
               width={240}
-              height={40}
+              height={99}
               priority
             />
           </Link>
