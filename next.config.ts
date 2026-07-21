@@ -4,8 +4,8 @@ import createNextIntlPlugin from "next-intl/plugin";
 const withNextIntl = createNextIntlPlugin();
 
 const nextConfig: NextConfig = {
-  /* config options here */
-  allowedDevOrigins: ["192.168.100.30"],
+  allowedDevOrigins: ["*"],
+  output: "standalone",
 };
 
 export default withNextIntl(nextConfig);

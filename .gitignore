@@ -50,3 +50,4 @@ dycrypt.mjs
 .agents/
 skills-lock.json
 .github/
+.prisma/
