@@ -73,8 +73,30 @@ export default function LoginVisualWrapper({
   return (
     <div
       ref={containerRef}
-      className="relative flex min-h-[100dvh] w-full mx-auto items-center justify-center items-center overflow-hidden selection:bg-brand-blue/20 selection:text-brand-blue px-4 py-8 sm:px-6 lg:px-8"
+      className="relative flex min-h-[100dvh] w-full mx-auto items-center justify-center overflow-hidden selection:bg-brand-blue/20 selection:text-brand-blue px-4 py-8 sm:px-6 lg:px-8"
     >
+      {/* Background */}
+      <div className="pointer-events-none absolute inset-0 -z-10">
+        {/* dégradé de base */}
+        <div className="absolute inset-0 bg-gradient-to-br from-[#F6F8FC] via-[#FAFBFF] to-[#EAEFFC]" />
+
+        {/* grille de points subtile */}
+        <div
+          className="absolute inset-0 opacity-[0.5]"
+          style={{
+            backgroundImage:
+              "radial-gradient(circle, rgba(148,163,184,0.35) 1px, transparent 1px)",
+            backgroundSize: "16px 16px",
+          }}
+        />
+
+        {/* halos lumineux */}
+        <div className="absolute -top-40 -left-32 h-[480px] w-[480px] rounded-full bg-brand-blue/20 blur-[110px]" />
+        <div className="absolute -bottom-48 -right-32 h-[520px] w-[520px] rounded-full bg-indigo-400/15 blur-[120px]" />
+
+        {/* vignette pour recentrer l'attention */}
+        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,transparent_35%,#F5F7FB_100%)]" />
+      </div>
 
       <div className="absolute right-8 top-8 z-20">
         <LanguageSwitcher />
@@ -90,7 +112,6 @@ export default function LoginVisualWrapper({
         <div className="flex w-full mx-auto flex-col justify-center px-6 py-12 sm:px-12 lg:w-1/2 xl:px-20">
           <div className="mx-auto w-full max-w-sm">{children}</div>
         </div>
-
       </div>
     </div>
   );

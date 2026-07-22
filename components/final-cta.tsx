@@ -12,41 +12,41 @@ export default async function FinalCta() {
       <div className="absolute top-0 inset-x-0 h-px bg-slate-200" />
 
       {/* Decorative background grid (light mode version) */}
-<>
-  <div
-    className="
-      absolute left-1/2 top-1/2
-      h-[800px] w-[800px]
-      -translate-x-1/2 -translate-y-1/2
-      rounded-full
-      bg-[#2563EB]/12
-      blur-[180px]
-      pointer-events-none
-    "
-  />
+      <>
+        <div
+          className="
+            absolute left-1/2 top-1/2
+            h-[800px] w-[800px]
+            -translate-x-1/2 -translate-y-1/2
+            rounded-full
+            bg-[#2563EB]/12
+            blur-[180px]
+            pointer-events-none
+          "
+        />
 
-  <div
-    className="
-      absolute left-[35%] top-[25%]
-      h-[320px] w-[320px]
-      rounded-full
-      bg-[#10B981]/8
-      blur-[120px]
-      pointer-events-none
-    "
-  />
+        <div
+          className="
+            absolute left-[35%] top-[25%]
+            h-[320px] w-[320px]
+            rounded-full
+            bg-[#10B981]/8
+            blur-[120px]
+            pointer-events-none
+          "
+        />
 
-  <div
-    className="
-      absolute right-[30%] bottom-[20%]
-      h-[260px] w-[260px]
-      rounded-full
-      bg-[#2563EB]/8
-      blur-[120px]
-      pointer-events-none
-    "
-  />
-</>
+        <div
+          className="
+            absolute right-[30%] bottom-[20%]
+            h-[260px] w-[260px]
+            rounded-full
+            bg-[#2563EB]/8
+            blur-[120px]
+            pointer-events-none
+          "
+        />
+      </>
       <div className="max-w-4xl mx-auto px-6 md:px-8 text-center">
         {/* Main CTA Card */}
         <div className="p-8 md:p-16 relative overflow-hidden">

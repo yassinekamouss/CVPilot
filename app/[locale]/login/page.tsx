@@ -49,8 +49,7 @@ export default async function LoginPage({
 
   return (
     <LoginVisualWrapper>
-      <div className="flex flex-col gap-10 ">
-        
+      <div className="flex flex-col gap-10 ">      
         {/* Header: Logo & Controls */}
         <div className="flex w-full justify-center items-center justify-between animate-stagger-item">
           <Link href="/" className="group">
